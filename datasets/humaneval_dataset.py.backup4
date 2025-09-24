@@ -1,0 +1,48 @@
+import re
+from typing import Tuple
+
+def humaneval_data_process(dataset: list) -> list:
+    """
+    Processes the raw Humaneval dataset.
+    """
+    processed_dataset = []
+    for record in dataset:
+        processed_dataset.append({
+            "task": record["prompt"],
+            "test": record["test"],
+            "entry_point": record["entry_point"],
+            "answer": "" # Placeholder, as correctness is determined by tests
+        })
+    return processed_dataset
+
+def humaneval_get_predict(model_response: str) -> str:
+    """
+    Extracts the Python code block from the model's response.
+    It looks for a ```python ... ``` block and extracts the content.
+    If not found, it assumes the entire response is the code.
+    """
+    if '```python' in model_response:
+        match = re.search(r"```python\n(.*?)\n```", model_response, re.DOTALL)
+        if match:
+            return match.group(1)
+    
+    # Fallback for code that isn't in a markdown block
+    return model_response.strip()
+
+def check_correctness(prompt: str, completion: str, test: str) -> Tuple[float, str]:
+    """
+    Evaluates the generated code against the provided test cases with partial credit.
+    Returns a decimal score (0.0 to 1.0) based on the percentage of test cases that pass.
+    Uses a simpler approach: try to run the full program, if it fails, give 0.0
+    """
+    program = f"{prompt}\n{completion}\n{test}"
+    try:
+        exec_globals = {}
+        exec(program, exec_globals)
+        return 1.0, "All tests passed"
+    except AssertionError as e:
+        # For now, if any assertion fails, give 0.0
+        # This is simpler and more reliable than trying to parse individual assertions
+        return 0.0, f"Assertion failed: {e}"
+    except Exception as e:
+        return 0.0, f"Execution failed: {type(e).__name__}: {e}"

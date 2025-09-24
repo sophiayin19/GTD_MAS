@@ -1,0 +1,1186 @@
+[
+    {
+        "Question": "def encrypt(s: str) -> str:\n    \"\"\"Create a function encrypt that takes a string as an argument and\n    returns a string encrypted with the alphabet being rotated. \n    The alphabet should be rotated in a manner such that the letters \n    shift down by two multiplied to two places.\n    For example:\n    >>> encrypt('hi')\n    'lm'\n    >>> encrypt('asdfghjkl')\n    'ewhjklnop'\n    >>> encrypt('gf')\n    'kj'\n    >>> encrypt('et')\n    'ix'\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('hi') == 'lm'\n    assert candidate('asdfghjkl') == 'ewhjklnop'\n    assert candidate('gf') == 'kj'\n    assert candidate('et') == 'ix'\n    assert candidate('faewfawefaewg') == 'jeiajeaijeiak'\n    assert candidate('hellomyfriend') == 'lippsqcjvmirh'\n    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh') == 'hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl'\n    assert candidate('a') == 'e'\n\ndef test_check():\n    check(encrypt)\n\ntest_check()\n",
+        "Response": "```python\ndef encrypt(s: str) -> str:\n    \"\"\"Create a function encrypt that takes a string as an argument and\n    returns a string encrypted with the alphabet being rotated. \n    The alphabet should be rotated in a manner such that the letters \n    shift down by two multiplied to two places.\n    For example:\n    >>> encrypt('hi')\n    'lm'\n    >>> encrypt('asdfghjkl')\n    'ewhjklnop'\n    >>> encrypt('gf')\n    'kj'\n    >>> encrypt('et')\n    'ix'\n    \"\"\"\n    def rotate_char(c: str) -> str:\n        if 'a' <= c <= 'z':\n            return chr((ord(c) - ord('a') + 4) % 26 + ord('a'))\n        return c\n\n    return ''.join(rotate_char(c) for c in s)\n```",
+        "Attempt_Code": "def encrypt(s: str) -> str:\n    \"\"\"Create a function encrypt that takes a string as an argument and\n    returns a string encrypted with the alphabet being rotated. \n    The alphabet should be rotated in a manner such that the letters \n    shift down by two multiplied to two places.\n    For example:\n    >>> encrypt('hi')\n    'lm'\n    >>> encrypt('asdfghjkl')\n    'ewhjklnop'\n    >>> encrypt('gf')\n    'kj'\n    >>> encrypt('et')\n    'ix'\n    \"\"\"\n    def rotate_char(c: str) -> str:\n        if 'a' <= c <= 'z':\n            return chr((ord(c) - ord('a') + 4) % 26 + ord('a'))\n        return c\n\n    return ''.join(rotate_char(c) for c in s)",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 1.0,
+        "Total_executed": 2,
+        "Pass_Rate": 0.5
+    },
+    {
+        "Question": "from typing import List\n\ndef add(lst: List[int]) -> int:\n    \"\"\"Given a non-empty list of integers lst. add the even elements that are at odd indices..\n\n\n    Examples:\n    >>> add([4, 2, 6, 7])\n    2\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([4, 88]) == 88\n    assert candidate([4, 5, 6, 7, 2, 122]) == 122\n    assert candidate([4, 0, 6, 7]) == 0\n    assert candidate([4, 4, 6, 8]) == 12\n\ndef test_check():\n    check(add)\n\ntest_check()\n",
+        "Response": "- Failure modes: Function may not handle empty lists despite non-empty assumption.\n- Boundary cases: Lists with one element; even elements at even indices.\n- Hidden constraints: Assumes list only contains integers; ignores negative numbers and duplicates; may misinterpret non-integer input.\n- Logical mismatch: Description specifies \"non-empty,\" but no input validation exists.",
+        "Attempt_Code": "- Failure modes: Function may not handle empty lists despite non-empty assumption.\n- Boundary cases: Lists with one element; even elements at even indices.\n- Hidden constraints: Assumes list only contains integers; ignores negative numbers and duplicates; may misinterpret non-integer input.\n- Logical mismatch: Description specifies \"non-empty,\" but no input validation exists.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 12)",
+        "Generated_Topology": [
+            [
+                0,
+                1,
+                1,
+                1
+            ],
+            [
+                1,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ]
+        ],
+        "Total_solved": 2.0,
+        "Total_executed": 4,
+        "Pass_Rate": 0.5
+    },
+    {
+        "Question": "def fibfib(n: int) -> int:\n    \"\"\"The FibFib number sequence is a sequence similar to the Fibbonacci sequnece that's defined as follows:\n    fibfib(0) == 0\n    fibfib(1) == 0\n    fibfib(2) == 1\n    fibfib(n) == fibfib(n-1) + fibfib(n-2) + fibfib(n-3).\n    Please write a function to efficiently compute the n-th element of the fibfib number sequence.\n    >>> fibfib(1)\n    0\n    >>> fibfib(5)\n    4\n    >>> fibfib(8)\n    24\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(2) == 1\n    assert candidate(1) == 0\n    assert candidate(5) == 4\n    assert candidate(8) == 24\n    assert candidate(10) == 81\n    assert candidate(12) == 274\n    assert candidate(14) == 927\n\ndef test_check():\n    check(fibfib)\n\ntest_check()\n",
+        "Response": "- **Negative Inputs**: Function may not handle negative integers, leading to incorrect results or infinite recursion.\n- **Large Inputs**: High values of `n` may cause stack overflow or excessive computation time due to recursion depth and exponential growth.\n- **Boundary Cases**: Ensure proper handling of `fibfib(0)` and `fibfib(1)` which both return 0, contrasted with the expected behavior.\n- **Duplicate Computations**: Recursive approach may cause redundant calculations without memoization, leading to inefficiency.\n- **Type Constraints**: Non-integer inputs (e.g., strings, floats) could cause runtime errors.\n- **Hidden Constraints**: May not clarify acceptable range for `n` (e.g., integer size limits).\n- **Logical Errors**: Examples provided for expected output may be incorrect, disrupting the understanding of expected results.",
+        "Attempt_Code": "- **Negative Inputs**: Function may not handle negative integers, leading to incorrect results or infinite recursion.\n- **Large Inputs**: High values of `n` may cause stack overflow or excessive computation time due to recursion depth and exponential growth.\n- **Boundary Cases**: Ensure proper handling of `fibfib(0)` and `fibfib(1)` which both return 0, contrasted with the expected behavior.\n- **Duplicate Computations**: Recursive approach may cause redundant calculations without memoization, leading to inefficiency.\n- **Type Constraints**: Non-integer inputs (e.g., strings, floats) could cause runtime errors.\n- **Hidden Constraints**: May not clarify acceptable range for `n` (e.g., integer size limits).\n- **Logical Errors**: Examples provided for expected output may be incorrect, disrupting the understanding of expected results.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 16)",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                1,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 2.0,
+        "Total_executed": 6,
+        "Pass_Rate": 0.3333333333333333
+    },
+    {
+        "Question": "from typing import List, Any\n\ndef filter_integers(values: List[Any]) -> List[int]:\n    \"\"\" Filter given list of any python values only for integers\n    >>> filter_integers(['a', 3.14, 5])\n    [5]\n    >>> filter_integers([1, 2, 3, 'abc', {  }, []])\n    [1, 2, 3]\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([]) == []\n    assert candidate([4, {  }, [], 23.2, 9, 'adasd']) == [4, 9]\n    assert candidate([3, 'c', 3, 3, 'a', 'b']) == [3, 3, 3]\n\ndef test_check():\n    check(filter_integers)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List, Any\n\ndef filter_integers(values: List[Any]) -> List[int]:\n    \"\"\" Filter given list of any python values only for integers\n    >>> filter_integers(['a', 3.14, 5])\n    [5]\n    >>> filter_integers([1, 2, 3, 'abc', {  }, []])\n    [1, 2, 3]\n    \"\"\"\n    return [value for value in values if isinstance(value, int)]\n```",
+        "Attempt_Code": "from typing import List, Any\n\ndef filter_integers(values: List[Any]) -> List[int]:\n    \"\"\" Filter given list of any python values only for integers\n    >>> filter_integers(['a', 3.14, 5])\n    [5]\n    >>> filter_integers([1, 2, 3, 'abc', {  }, []])\n    [1, 2, 3]\n    \"\"\"\n    return [value for value in values if isinstance(value, int)]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                1,
+                0,
+                0
+            ],
+            [
+                0,
+                1,
+                1,
+                0
+            ],
+            [
+                0,
+                1,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 3.0,
+        "Total_executed": 8,
+        "Pass_Rate": 0.375
+    },
+    {
+        "Question": "from typing import List\n\ndef parse_music(music_string: str) -> List[int]:\n    \"\"\" Input to this function is a string representing musical notes in a special ASCII format.\n    Your task is to parse this string and return list of integers corresponding to how many beats does each\n    not last.\n\n    Here is a legend:\n    'o' - whole note, lasts four beats\n    'o|' - half note, lasts two beats\n    '.|' - quater note, lasts one beat\n\n    >>> parse_music('o o| .| o| o| .| .| .| .| o o')\n    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('') == []\n    assert candidate('o o o o') == [4, 4, 4, 4]\n    assert candidate('.| .| .| .|') == [1, 1, 1, 1]\n    assert candidate('o| o| .| .| o o o o') == [2, 2, 1, 1, 4, 4, 4, 4]\n    assert candidate('o| .| o| .| o o| o o|') == [2, 1, 2, 1, 4, 2, 4, 2]\n\ndef test_check():\n    check(parse_music)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef parse_music(music_string: str) -> List[int]:\n    \"\"\" Input to this function is a string representing musical notes in a special ASCII format.\n    Your task is to parse this string and return list of integers corresponding to how many beats does each\n    not last.\n\n    Here is a legend:\n    'o' - whole note, lasts four beats\n    'o|' - half note, lasts two beats\n    '.|' - quater note, lasts one beat\n\n    >>> parse_music('o o| .| o| o| .| .| .| .| o o')\n    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\n    \"\"\"\n    beats_mapping = {'o': 4, 'o|': 2, '.|': 1}\n    \n    music_notes = music_string.split()\n    result = [beats_mapping[note] for note in music_notes if note in beats_mapping]\n    \n    return result\n```",
+        "Attempt_Code": "from typing import List\n\ndef parse_music(music_string: str) -> List[int]:\n    \"\"\" Input to this function is a string representing musical notes in a special ASCII format.\n    Your task is to parse this string and return list of integers corresponding to how many beats does each\n    not last.\n\n    Here is a legend:\n    'o' - whole note, lasts four beats\n    'o|' - half note, lasts two beats\n    '.|' - quater note, lasts one beat\n\n    >>> parse_music('o o| .| o| o| .| .| .| .| o o')\n    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\n    \"\"\"\n    beats_mapping = {'o': 4, 'o|': 2, '.|': 1}\n    \n    music_notes = music_string.split()\n    result = [beats_mapping[note] for note in music_notes if note in beats_mapping]\n    \n    return result",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                1,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ]
+        ],
+        "Total_solved": 4.0,
+        "Total_executed": 10,
+        "Pass_Rate": 0.4
+    },
+    {
+        "Question": "from typing import List\n\ndef all_prefixes(string: str) -> List[str]:\n    \"\"\" Return list of all prefixes from shortest to longest of the input string\n    >>> all_prefixes('abc')\n    ['a', 'ab', 'abc']\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('') == []\n    assert candidate('asdfgh') == ['a', 'as', 'asd', 'asdf', 'asdfg', 'asdfgh']\n    assert candidate('WWW') == ['W', 'WW', 'WWW']\n\ndef test_check():\n    check(all_prefixes)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef all_prefixes(string: str) -> List[str]:\n    \"\"\" Return list of all prefixes from shortest to longest of the input string\n    >>> all_prefixes('abc')\n    ['a', 'ab', 'abc']\n    \"\"\"\n    return [string[:i] for i in range(1, len(string) + 1)]\n```",
+        "Attempt_Code": "from typing import List\n\ndef all_prefixes(string: str) -> List[str]:\n    \"\"\" Return list of all prefixes from shortest to longest of the input string\n    >>> all_prefixes('abc')\n    ['a', 'ab', 'abc']\n    \"\"\"\n    return [string[:i] for i in range(1, len(string) + 1)]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                1,
+                0,
+                0
+            ],
+            [
+                0,
+                1,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ]
+        ],
+        "Total_solved": 5.0,
+        "Total_executed": 12,
+        "Pass_Rate": 0.4166666666666667
+    },
+    {
+        "Question": "from typing import List\n\ndef eat(number: int, need: int, remaining: int) -> List[int]:\n    \"\"\"\n    You're a hungry rabbit, and you already have eaten a certain number of carrots,\n    but now you need to eat more carrots to complete the day's meals.\n    you should return an array of [ total number of eaten carrots after your meals,\n                                    the number of carrots left after your meals ]\n    if there are not enough remaining carrots, you will eat all remaining carrots, but will still be hungry.\n    \n    Example:\n    >>> eat(5, 6, 10)\n    [11, 4]\n    >>> eat(4, 8, 9)\n    [12, 1]\n    >>> eat(1, 10, 10)\n    [11, 0]\n    >>> eat(2, 11, 5)\n    [7, 0]\n    \n    Variables:\n    @number : integer\n        the number of carrots that you have eaten.\n    @need : integer\n        the number of carrots that you need to eat.\n    @remaining : integer\n        the number of remaining carrots thet exist in stock\n    \n    Constrain:\n    * 0 <= number <= 1000\n    * 0 <= need <= 1000\n    * 0 <= remaining <= 1000\n\n    Have fun :)\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(5, 6, 10) == [11, 4]\n    assert candidate(4, 8, 9) == [12, 1]\n    assert candidate(1, 10, 10) == [11, 0]\n    assert candidate(2, 11, 5) == [7, 0]\n    assert candidate(4, 5, 7) == [9, 2]\n    assert candidate(4, 5, 1) == [5, 0]\n\ndef test_check():\n    check(eat)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef eat(number: int, need: int, remaining: int) -> List[int]:\n    total_eaten = number\n    if remaining >= need:\n        total_eaten += need\n        left = remaining - need\n    else:\n        total_eaten += remaining\n        left = 0\n    return [total_eaten, left]\n```",
+        "Attempt_Code": "from typing import List\n\ndef eat(number: int, need: int, remaining: int) -> List[int]:\n    total_eaten = number\n    if remaining >= need:\n        total_eaten += need\n        left = remaining - need\n    else:\n        total_eaten += remaining\n        left = 0\n    return [total_eaten, left]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                1,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                1,
+                0,
+                1,
+                0
+            ],
+            [
+                1,
+                0,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 7.0,
+        "Total_executed": 14,
+        "Pass_Rate": 0.5
+    },
+    {
+        "Question": "from typing import List\n\ndef do_algebra(operator: List[str], operand: List[int]) -> int:\n    \"\"\"\n    Given two lists operator, and operand. The first list has basic algebra operations, and \n    the second list is a list of integers. Use the two given lists to build the algebric \n    expression and return the evaluation of this expression.\n\n    The basic algebra operations:\n    Addition ( + ) \n    Subtraction ( - ) \n    Multiplication ( * ) \n    Floor division ( // ) \n    Exponentiation ( ** ) \n\n    Example:\n    operator['+', '*', '-']\n    array = [2, 3, 4, 5]\n    result = 2 + 3 * 4 - 5\n    => result = 9\n\n    Note:\n        The length of operator list is equal to the length of operand list minus one.\n        Operand is a list of of non-negative integers.\n        Operator list has at least one operator, and operand list has at least two operands.\n\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(['**', '*', '+'], [2, 3, 4, 5]) == 37\n    assert candidate(['+', '*', '-'], [2, 3, 4, 5]) == 9\n    assert candidate(['//', '*'], [7, 3, 4]) == 8\n\ndef test_check():\n    check(do_algebra)\n\ntest_check()\n",
+        "Response": "- **Failure Modes**: Incorrect precedence handling may lead to wrong results (e.g., missing parentheses).\n- **Boundary Cases**: Single operator with two operands; max length of operator or operand lists; empty operator list leading to undefined behaviour.\n- **Hidden Constraints**: All operands must be non-negative; specific handling required for division by zero; operator list must contain valid operations only; potential for integer overflows with large exponentiation.",
+        "Attempt_Code": "- **Failure Modes**: Incorrect precedence handling may lead to wrong results (e.g., missing parentheses).\n- **Boundary Cases**: Single operator with two operands; max length of operator or operand lists; empty operator list leading to undefined behaviour.\n- **Hidden Constraints**: All operands must be non-negative; specific handling required for division by zero; operator list must contain valid operations only; potential for integer overflows with large exponentiation.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 29)",
+        "Generated_Topology": [
+            [
+                1,
+                1,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                1,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 7.0,
+        "Total_executed": 16,
+        "Pass_Rate": 0.4375
+    },
+    {
+        "Question": "from typing import List\n\ndef by_length(arr: List[int]) -> List[str]:\n    \"\"\"\n    Given an array of integers, sort the integers that are between 1 and 9 inclusive,\n    reverse the resulting array, and then replace each digit by its corresponding name from\n    \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\".\n\n    For example:\n    >>> by_length([2, 1, 1, 4, 5, 8, 2, 3])\n    ['Eight', 'Five', 'Four', 'Three', 'Two', 'Two', 'One', 'One']\n    \n      If the array is empty, return an empty array:\n    >>> by_length([])\n    []\n    \n      If the array has any strange number ignore it:\n    >>> by_length([1, -1, 55])\n    ['One']\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([2, 1, 1, 4, 5, 8, 2, 3]) == ['Eight', 'Five', 'Four', 'Three', 'Two', 'Two', 'One', 'One']\n    assert candidate([]) == []\n    assert candidate([1, -1, 55]) == ['One']\n    assert candidate([1, -1, 3, 2]) == ['Three', 'Two', 'One']\n    assert candidate([9, 4, 8]) == ['Nine', 'Eight', 'Four']\n\ndef test_check():\n    check(by_length)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef by_length(arr: List[int]) -> List[str]:\n    \"\"\"\n    Given an array of integers, sort the integers that are between 1 and 9 inclusive,\n    reverse the resulting array, and then replace each digit by its corresponding name from\n    \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\".\n\n    For example:\n    >>> by_length([2, 1, 1, 4, 5, 8, 2, 3])\n    ['Eight', 'Five', 'Four', 'Three', 'Two', 'Two', 'One', 'One']\n    \n    If the array is empty, return an empty array:\n    >>> by_length([])\n    []\n    \n    If the array has any strange number ignore it:\n    >>> by_length([1, -1, 55])\n    ['One']\n    \"\"\"\n    names = [\"\", \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\"]\n    filtered_numbers = [num for num in arr if 1 <= num <= 9]\n    filtered_numbers.sort(reverse=True)\n    return [names[num] for num in filtered_numbers]\n```",
+        "Attempt_Code": "from typing import List\n\ndef by_length(arr: List[int]) -> List[str]:\n    \"\"\"\n    Given an array of integers, sort the integers that are between 1 and 9 inclusive,\n    reverse the resulting array, and then replace each digit by its corresponding name from\n    \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\".\n\n    For example:\n    >>> by_length([2, 1, 1, 4, 5, 8, 2, 3])\n    ['Eight', 'Five', 'Four', 'Three', 'Two', 'Two', 'One', 'One']\n    \n    If the array is empty, return an empty array:\n    >>> by_length([])\n    []\n    \n    If the array has any strange number ignore it:\n    >>> by_length([1, -1, 55])\n    ['One']\n    \"\"\"\n    names = [\"\", \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\"]\n    filtered_numbers = [num for num in arr if 1 <= num <= 9]\n    filtered_numbers.sort(reverse=True)\n    return [names[num] for num in filtered_numbers]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 9.0,
+        "Total_executed": 18,
+        "Pass_Rate": 0.5
+    },
+    {
+        "Question": "from typing import List\n\ndef count_up_to(n: int) -> List[int]:\n    \"\"\"Implement a function that takes an non-negative integer and returns an array of the first n\n    integers that are prime numbers and less than n.\n    for example:\n    >>> count_up_to(5)\n    [2, 3]\n    >>> count_up_to(11)\n    [2, 3, 5, 7]\n    >>> count_up_to(0)\n    []\n    >>> count_up_to(20)\n    [2, 3, 5, 7, 11, 13, 17, 19]\n    >>> count_up_to(1)\n    []\n    >>> count_up_to(18)\n    [2, 3, 5, 7, 11, 13, 17]\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(5) == [2, 3]\n    assert candidate(6) == [2, 3, 5]\n    assert candidate(7) == [2, 3, 5]\n    assert candidate(10) == [2, 3, 5, 7]\n    assert candidate(0) == []\n    assert candidate(22) == [2, 3, 5, 7, 11, 13, 17, 19]\n    assert candidate(1) == []\n    assert candidate(18) == [2, 3, 5, 7, 11, 13, 17]\n    assert candidate(47) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]\n    assert candidate(101) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]\n\ndef test_check():\n    check(count_up_to)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef count_up_to(n: int) -> List[int]:\n    \"\"\"Implement a function that takes a non-negative integer and returns an array of the first n\n    integers that are prime numbers and less than n.\n    for example:\n    >>> count_up_to(5)\n    [2, 3]\n    >>> count_up_to(11)\n    [2, 3, 5, 7]\n    >>> count_up_to(0)\n    []\n    >>> count_up_to(20)\n    [2, 3, 5, 7, 11, 13, 17, 19]\n    >>> count_up_to(1)\n    []\n    >>> count_up_to(18)\n    [2, 3, 5, 7, 11, 13, 17]\n    \"\"\"\n\n    def is_prime(num: int) -> bool:\n        if num <= 1:\n            return False\n        for i in range(2, int(num**0.5) + 1):\n            if num % i == 0:\n                return False\n        return True\n\n    primes = []\n    for i in range(2, n):\n        if is_prime(i):\n            primes.append(i)\n    \n    return primes\n```",
+        "Attempt_Code": "from typing import List\n\ndef count_up_to(n: int) -> List[int]:\n    \"\"\"Implement a function that takes a non-negative integer and returns an array of the first n\n    integers that are prime numbers and less than n.\n    for example:\n    >>> count_up_to(5)\n    [2, 3]\n    >>> count_up_to(11)\n    [2, 3, 5, 7]\n    >>> count_up_to(0)\n    []\n    >>> count_up_to(20)\n    [2, 3, 5, 7, 11, 13, 17, 19]\n    >>> count_up_to(1)\n    []\n    >>> count_up_to(18)\n    [2, 3, 5, 7, 11, 13, 17]\n    \"\"\"\n\n    def is_prime(num: int) -> bool:\n        if num <= 1:\n            return False\n        for i in range(2, int(num**0.5) + 1):\n            if num % i == 0:\n                return False\n        return True\n\n    primes = []\n    for i in range(2, n):\n        if is_prime(i):\n            primes.append(i)\n    \n    return primes",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                1,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ]
+        ],
+        "Total_solved": 11.0,
+        "Total_executed": 20,
+        "Pass_Rate": 0.55
+    },
+    {
+        "Question": "from typing import List\n\ndef total_match(lst1: List[str], lst2: List[str]) -> List[str]:\n    \"\"\"\n    Write a function that accepts two lists of strings and returns the list that has \n    total number of chars in the all strings of the list less than the other list.\n\n    if the two lists have the same number of chars, return the first list.\n\n    Examples\n    >>> total_match([], [])\n    []\n    >>> total_match(['hi', 'admin'], ['hI', 'Hi'])\n    ['hI', 'Hi']\n    >>> total_match(['hi', 'admin'], ['hi', 'hi', 'admin', 'project'])\n    ['hi', 'admin']\n    >>> total_match(['hi', 'admin'], ['hI', 'hi', 'hi'])\n    ['hI', 'hi', 'hi']\n    >>> total_match(['4'], ['1', '2', '3', '4', '5'])\n    ['4']\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([], []) == []\n    assert candidate(['hi', 'admin'], ['hi', 'hi']) == ['hi', 'hi']\n    assert candidate(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) == ['hi', 'admin']\n    assert candidate(['4'], ['1', '2', '3', '4', '5']) == ['4']\n    assert candidate(['hi', 'admin'], ['hI', 'Hi']) == ['hI', 'Hi']\n    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hi']) == ['hI', 'hi', 'hi']\n    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hii']) == ['hi', 'admin']\n    assert candidate([], ['this']) == []\n    assert candidate(['this'], []) == []\n\ndef test_check():\n    check(total_match)\n\ntest_check()\n",
+        "Response": "- Calculate total character counts for both lists using built-in functions.\n- Compare the total counts; return the list with fewer characters.\n- Handle edge cases like empty lists (both lists return empty).\n- Ensure case sensitivity is respected in string comparisons.\n- Time complexity is O(n) for length calculation, space is O(1) for constants.",
+        "Attempt_Code": "- Calculate total character counts for both lists using built-in functions.\n- Compare the total counts; return the list with fewer characters.\n- Handle edge cases like empty lists (both lists return empty).\n- Ensure case sensitivity is respected in string comparisons.\n- Time complexity is O(n) for length calculation, space is O(1) for constants.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 23)",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                1,
+                1,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ]
+        ],
+        "Total_solved": 11.0,
+        "Total_executed": 22,
+        "Pass_Rate": 0.5
+    },
+    {
+        "Question": "def is_nested(string: str) -> bool:\n    \"\"\"\n    Create a function that takes a string as input which contains only square brackets.\n    The function should return True if and only if there is a valid subsequence of brackets \n    where at least one bracket in the subsequence is nested.\n\n    >>> is_nested('[[]]')\n    True\n    >>> is_nested('[]]]]]]][[[[[]')\n    False\n    >>> is_nested('[][]')\n    False\n    >>> is_nested('[]')\n    False\n    >>> is_nested('[[][]]')\n    True\n    >>> is_nested('[[]][[')\n    True\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('[[]]') == True\n    assert candidate('[]]]]]]][[[[[]') == False\n    assert candidate('[][]') == False\n    assert candidate('[]') == False\n    assert candidate('[[[[]]]]') == True\n    assert candidate('[]]]]]]]]]]') == False\n    assert candidate('[][][[]]') == True\n    assert candidate('[[]') == False\n    assert candidate('[]]') == False\n    assert candidate('[[]][[') == True\n    assert candidate('[[][]]') == True\n    assert candidate('') == False\n    assert candidate('[[[[[[[[') == False\n    assert candidate(']]]]]]]]') == False\n\ndef test_check():\n    check(is_nested)\n\ntest_check()\n",
+        "Response": "- Use a stack to track opening brackets while iterating through the string.\n- Check for closing brackets; if unmatched, return False.\n- Ensure at least one nested pair (two adjacent brackets) is found by tracking depth or pairs.\n- Edge cases: empty string or single bracket should return False.\n- Time complexity: O(n); space complexity: O(n) in worst case.",
+        "Attempt_Code": "- Use a stack to track opening brackets while iterating through the string.\n- Check for closing brackets; if unmatched, return False.\n- Ensure at least one nested pair (two adjacent brackets) is found by tracking depth or pairs.\n- Edge cases: empty string or single bracket should return False.\n- Time complexity: O(n); space complexity: O(n) in worst case.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 21)",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                1,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                1,
+                0,
+                1,
+                0
+            ]
+        ],
+        "Total_solved": 12.0,
+        "Total_executed": 24,
+        "Pass_Rate": 0.5
+    },
+    {
+        "Question": "from typing import List\n\ndef odd_count(lst: List[str]) -> List[str]:\n    \"\"\"Given a list of strings, where each string consists of only digits, return a list.\n    Each element i of the output should be \"the number of odd elements in the\n    string i of the input.\" where all the i's should be replaced by the number\n    of odd digits in the i'th string of the input.\n\n    >>> odd_count(['1234567'])\n    ['the number of odd elements 4n the str4ng 4 of the 4nput.']\n    >>> odd_count(['3', '11111111'])\n    ['the number of odd elements 1n the str1ng 1 of the 1nput.', 'the number of odd elements 8n the str8ng 8 of the 8nput.']\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(['1234567']) == ['the number of odd elements 4n the str4ng 4 of the 4nput.']\n    assert candidate(['3', '11111111']) == ['the number of odd elements 1n the str1ng 1 of the 1nput.', 'the number of odd elements 8n the str8ng 8 of the 8nput.']\n    assert candidate(['271', '137', '314']) == ['the number of odd elements 2n the str2ng 2 of the 2nput.', 'the number of odd elements 3n the str3ng 3 of the 3nput.', 'the number of odd elements 2n the str2ng 2 of the 2nput.']\n\ndef test_check():\n    check(odd_count)\n\ntest_check()\n",
+        "Response": "- Iterate through each string in the input list and count odd digits (1, 3, 5, 7, 9).\n- For each count, format the result string replacing 'i' with the odd digit count.\n- Handle cases where strings are empty or contain no odd digits.\n- Return a list of formatted strings.\n- Time complexity: O(n*m), where n is the number of strings and m is the average string length; Space complexity: O(n).",
+        "Attempt_Code": "- Iterate through each string in the input list and count odd digits (1, 3, 5, 7, 9).\n- For each count, format the result string replacing 'i' with the odd digit count.\n- Handle cases where strings are empty or contain no odd digits.\n- Return a list of formatted strings.\n- Time complexity: O(n*m), where n is the number of strings and m is the average string length; Space complexity: O(n).",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 15)",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                1,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 13.0,
+        "Total_executed": 26,
+        "Pass_Rate": 0.5
+    },
+    {
+        "Question": "from typing import Tuple\n\ndef even_odd_palindrome(n: int) -> Tuple[int, int]:\n    \"\"\"\n    Given a positive integer n, return a tuple that has the number of even and odd\n    integer palindromes that fall within the range(1, n), inclusive.\n\n    Example 1:\n\n    >>> even_odd_palindrome(3)\n    (1, 2)\n        Explanation:\n        Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.\n\n    Example 2:\n\n    >>> even_odd_palindrome(12)\n    (4, 6)\n        Explanation:\n        Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.\n\n    Note:\n        1. 1 <= n <= 10^3\n        2. returned tuple has the number of even and odd integer palindromes respectively.\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(123) == (8, 13)\n    assert candidate(12) == (4, 6)\n    assert candidate(3) == (1, 2)\n    assert candidate(63) == (6, 8)\n    assert candidate(25) == (5, 6)\n    assert candidate(19) == (4, 6)\n    assert candidate(9) == (4, 5)\n    assert candidate(1) == (0, 1)\n\ndef test_check():\n    check(even_odd_palindrome)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import Tuple\n\ndef even_odd_palindrome(n: int) -> Tuple[int, int]:\n    def is_palindrome(x: int) -> bool:\n        return str(x) == str(x)[::-1]\n\n    even_count = 0\n    odd_count = 0\n    \n    for i in range(1, n + 1):\n        if is_palindrome(i):\n            if i % 2 == 0:\n                even_count += 1\n            else:\n                odd_count += 1\n\n    return (even_count, odd_count)\n```",
+        "Attempt_Code": "from typing import Tuple\n\ndef even_odd_palindrome(n: int) -> Tuple[int, int]:\n    def is_palindrome(x: int) -> bool:\n        return str(x) == str(x)[::-1]\n\n    even_count = 0\n    odd_count = 0\n    \n    for i in range(1, n + 1):\n        if is_palindrome(i):\n            if i % 2 == 0:\n                even_count += 1\n            else:\n                odd_count += 1\n\n    return (even_count, odd_count)",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                1,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ]
+        ],
+        "Total_solved": 15.0,
+        "Total_executed": 28,
+        "Pass_Rate": 0.5357142857142857
+    },
+    {
+        "Question": "from typing import List\n\ndef derivative(xs: List[int]) -> List[int]:\n    \"\"\" xs represent coefficients of a polynomial.\n    xs[0] + xs[1] * x + xs[2] * x^2 + ....\n     Return derivative of this polynomial in the same form.\n    >>> derivative([3, 1, 2, 4, 5])\n    [1, 4, 12, 20]\n    >>> derivative([1, 2, 3])\n    [2, 6]\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([3, 1, 2, 4, 5]) == [1, 4, 12, 20]\n    assert candidate([1, 2, 3]) == [2, 6]\n    assert candidate([3, 2, 1]) == [2, 2]\n    assert candidate([3, 2, 1, 0, 4]) == [2, 2, 0, 16]\n    assert candidate([1]) == []\n\ndef test_check():\n    check(derivative)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef derivative(xs: List[int]) -> List[int]:\n    \"\"\" xs represent coefficients of a polynomial.\n    xs[0] + xs[1] * x + xs[2] * x^2 + ....\n     Return derivative of this polynomial in the same form.\n    >>> derivative([3, 1, 2, 4, 5])\n    [1, 4, 12, 20]\n    >>> derivative([1, 2, 3])\n    [2, 6]\n    \"\"\"\n    return [i * coef for i, coef in enumerate(xs) if i > 0]\n```",
+        "Attempt_Code": "from typing import List\n\ndef derivative(xs: List[int]) -> List[int]:\n    \"\"\" xs represent coefficients of a polynomial.\n    xs[0] + xs[1] * x + xs[2] * x^2 + ....\n     Return derivative of this polynomial in the same form.\n    >>> derivative([3, 1, 2, 4, 5])\n    [1, 4, 12, 20]\n    >>> derivative([1, 2, 3])\n    [2, 6]\n    \"\"\"\n    return [i * coef for i, coef in enumerate(xs) if i > 0]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                1,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 16.0,
+        "Total_executed": 30,
+        "Pass_Rate": 0.5333333333333333
+    },
+    {
+        "Question": "def solve(s: str) -> str:\n    \"\"\"You are given a string s.\n    if s[i] is a letter, reverse its case from lower to upper or vise versa, \n    otherwise keep it as it is.\n    If the string contains no letters, reverse the string.\n    The function should return the resulted string.\n    Examples\n    >>> solve('1234')\n    '4321'\n    >>> solve('ab')\n    'AB'\n    >>> solve('#a@C')\n    '#A@c'\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('AsDf') == 'aSdF'\n    assert candidate('1234') == '4321'\n    assert candidate('ab') == 'AB'\n    assert candidate('#a@C') == '#A@c'\n    assert candidate('#AsdfW^45') == '#aSDFw^45'\n    assert candidate('#6@2') == '2@6#'\n    assert candidate('#$a^D') == '#$A^d'\n    assert candidate('#ccc') == '#CCC'\n\ndef test_check():\n    check(solve)\n\ntest_check()\n",
+        "Response": "```python\ndef solve(s: str) -> str:\n    \"\"\"You are given a string s.\n    if s[i] is a letter, reverse its case from lower to upper or vise versa, \n    otherwise keep it as it is.\n    If the string contains no letters, reverse the string.\n    The function should return the resulted string.\n    Examples\n    >>> solve('1234')\n    '4321'\n    >>> solve('ab')\n    'AB'\n    >>> solve('#a@C')\n    '#A@c'\n    \"\"\"\n    if any(c.isalpha() for c in s):\n        return ''.join(c.lower() if c.isupper() else c.upper() for c in s)\n    else:\n        return s[::-1]\n```",
+        "Attempt_Code": "def solve(s: str) -> str:\n    \"\"\"You are given a string s.\n    if s[i] is a letter, reverse its case from lower to upper or vise versa, \n    otherwise keep it as it is.\n    If the string contains no letters, reverse the string.\n    The function should return the resulted string.\n    Examples\n    >>> solve('1234')\n    '4321'\n    >>> solve('ab')\n    'AB'\n    >>> solve('#a@C')\n    '#A@c'\n    \"\"\"\n    if any(c.isalpha() for c in s):\n        return ''.join(c.lower() if c.isupper() else c.upper() for c in s)\n    else:\n        return s[::-1]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                1,
+                1,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 17.0,
+        "Total_executed": 32,
+        "Pass_Rate": 0.53125
+    },
+    {
+        "Question": "def fizz_buzz(n: int) -> int:\n    \"\"\"Return the number of times the digit 7 appears in integers less than n which are divisible by 11 or 13.\n    >>> fizz_buzz(50)\n    0\n    >>> fizz_buzz(78)\n    2\n    >>> fizz_buzz(79)\n    3\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(50) == 0\n    assert candidate(78) == 2\n    assert candidate(79) == 3\n    assert candidate(100) == 3\n    assert candidate(200) == 6\n    assert candidate(4000) == 192\n    assert candidate(10000) == 639\n    assert candidate(100000) == 8026\n\ndef test_check():\n    check(fizz_buzz)\n\ntest_check()\n",
+        "Response": "```python\ndef fizz_buzz(n: int) -> int:\n    \"\"\"Return the number of times the digit 7 appears in integers less than n which are divisible by 11 or 13.\n    >>> fizz_buzz(50)\n    0\n    >>> fizz_buzz(78)\n    2\n    >>> fizz_buzz(79)\n    3\n    \"\"\"\n    def count_digit_sevens(x: int) -> int:\n        return str(x).count('7')\n\n    count = 0\n    for i in range(n):\n        if i % 11 == 0 or i % 13 == 0:\n            count += count_digit_sevens(i)\n    \n    return count\n```",
+        "Attempt_Code": "def fizz_buzz(n: int) -> int:\n    \"\"\"Return the number of times the digit 7 appears in integers less than n which are divisible by 11 or 13.\n    >>> fizz_buzz(50)\n    0\n    >>> fizz_buzz(78)\n    2\n    >>> fizz_buzz(79)\n    3\n    \"\"\"\n    def count_digit_sevens(x: int) -> int:\n        return str(x).count('7')\n\n    count = 0\n    for i in range(n):\n        if i % 11 == 0 or i % 13 == 0:\n            count += count_digit_sevens(i)\n    \n    return count",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                1,
+                1,
+                1,
+                1
+            ],
+            [
+                1,
+                0,
+                0,
+                1
+            ],
+            [
+                1,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ]
+        ],
+        "Total_solved": 18.0,
+        "Total_executed": 34,
+        "Pass_Rate": 0.5294117647058824
+    },
+    {
+        "Question": "def solve(N: int) -> str:\n    \"\"\"Given a positive integer N, return the total sum of its digits in binary.\n    \n    Example\n    >>> solve(1000)\n    '1'\n    >>> solve(150)\n    '110'\n    >>> solve(147)\n    '1100'\n    \n    Variables:\n        @N integer\n             Constraints: 0 \u2264 N \u2264 10000.\n    Output:\n         a string of binary number\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(1000) == '1'\n    assert candidate(150) == '110'\n    assert candidate(147) == '1100'\n    assert candidate(333) == '1001'\n    assert candidate(963) == '10010'\n\ndef test_check():\n    check(solve)\n\ntest_check()\n",
+        "Response": "- Convert the integer N to its binary representation using built-in functions.\n- Count the number of '1's in the binary string to get the sum of digits.\n- Convert the sum (an integer) back to binary representation as a string.\n- Handle edge cases like N = 0, which should return '0'.\n- Time complexity is O(log N), space complexity O(log N) for binary representation.",
+        "Attempt_Code": "- Convert the integer N to its binary representation using built-in functions.\n- Count the number of '1's in the binary string to get the sum of digits.\n- Convert the sum (an integer) back to binary representation as a string.\n- Handle edge cases like N = 0, which should return '0'.\n- Time complexity is O(log N), space complexity O(log N) for binary representation.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 19)",
+        "Generated_Topology": [
+            [
+                1,
+                0,
+                1,
+                0
+            ],
+            [
+                1,
+                0,
+                1,
+                0
+            ],
+            [
+                1,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ]
+        ],
+        "Total_solved": 19.0,
+        "Total_executed": 36,
+        "Pass_Rate": 0.5277777777777778
+    },
+    {
+        "Question": "def count_upper(s: str) -> int:\n    \"\"\"\n    Given a string s, count the number of uppercase vowels in even indices.\n    \n    For example:\n    >>> count_upper('aBCdEf')\n    1\n    >>> count_upper('abcdefg')\n    0\n    >>> count_upper('dBBE')\n    0\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('aBCdEf') == 1\n    assert candidate('abcdefg') == 0\n    assert candidate('dBBE') == 0\n    assert candidate('B') == 0\n    assert candidate('U') == 1\n    assert candidate('') == 0\n    assert candidate('EEEE') == 2\n\ndef test_check():\n    check(count_upper)\n\ntest_check()\n",
+        "Response": "```python\ndef count_upper(s: str) -> int:\n    \"\"\"\n    Given a string s, count the number of uppercase vowels in even indices.\n    \n    For example:\n    >>> count_upper('aBCdEf')\n    1\n    >>> count_upper('abcdefg')\n    0\n    >>> count_upper('dBBE')\n    0\n    \"\"\"\n    upper_vowels = {'A', 'E', 'I', 'O', 'U'}\n    count = 0\n    \n    for i in range(0, len(s), 2):\n        if s[i] in upper_vowels:\n            count += 1\n            \n    return count\n```",
+        "Attempt_Code": "def count_upper(s: str) -> int:\n    \"\"\"\n    Given a string s, count the number of uppercase vowels in even indices.\n    \n    For example:\n    >>> count_upper('aBCdEf')\n    1\n    >>> count_upper('abcdefg')\n    0\n    >>> count_upper('dBBE')\n    0\n    \"\"\"\n    upper_vowels = {'A', 'E', 'I', 'O', 'U'}\n    count = 0\n    \n    for i in range(0, len(s), 2):\n        if s[i] in upper_vowels:\n            count += 1\n            \n    return count",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                1,
+                1,
+                0
+            ],
+            [
+                1,
+                1,
+                0,
+                1
+            ],
+            [
+                1,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 21.0,
+        "Total_executed": 38,
+        "Pass_Rate": 0.5526315789473685
+    },
+    {
+        "Question": "def largest_divisor(n: int) -> int:\n    \"\"\" For a given number n, find the largest number that divides n evenly, smaller than n\n    >>> largest_divisor(15)\n    5\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(3) == 1\n    assert candidate(7) == 1\n    assert candidate(10) == 5\n    assert candidate(100) == 50\n    assert candidate(49) == 7\n\ndef test_check():\n    check(largest_divisor)\n\ntest_check()\n",
+        "Response": "- **Zero Input**: `n = 0` leads to division by zero issues.\n- **Negative Inputs**: `n < 0` raises logical questions for \"largest divisor\".\n- **Prime Numbers**: If `n` is prime, function returns 1 instead of expected behavior.\n- **Edge Case for Small n**: `n = 1` returns no valid divisor.\n- **Large Numbers**: Performance concerns with very large input values, affecting execution time.",
+        "Attempt_Code": "- **Zero Input**: `n = 0` leads to division by zero issues.\n- **Negative Inputs**: `n < 0` raises logical questions for \"largest divisor\".\n- **Prime Numbers**: If `n` is prime, function returns 1 instead of expected behavior.\n- **Edge Case for Small n**: `n = 1` returns no valid divisor.\n- **Large Numbers**: Performance concerns with very large input values, affecting execution time.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 7)",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                1,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                1,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 22.0,
+        "Total_executed": 40,
+        "Pass_Rate": 0.55
+    },
+    {
+        "Question": "from typing import List\n\ndef f(n: int) -> List[int]:\n    \"\"\" Implement the function f that takes n as a parameter,\n    and returns a list of size n, such that the value of the element at index i is the factorial of i if i is even\n    or the sum of numbers from 1 to i otherwise.\n    i starts from 1.\n    the factorial of i is the multiplication of the numbers from 1 to i (1 * 2 * ... * i).\n    Example:\n    >>> f(5)\n    [1, 2, 6, 24, 15]\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(5) == [1, 2, 6, 24, 15]\n    assert candidate(7) == [1, 2, 6, 24, 15, 720, 28]\n    assert candidate(1) == [1]\n    assert candidate(3) == [1, 2, 6]\n\ndef test_check():\n    check(f)\n\ntest_check()\n",
+        "Response": "- Iterate from 1 to n, maintaining an empty list.\n- For each index i, compute factorial if i is even; use the formula i * (i + 1) // 2 for odd.\n- Handle edge cases: n = 0 should return an empty list.\n- Time complexity: O(n) for the iteration, O(k) for factorial (k is i value).\n- Space complexity: O(n) for the result list.",
+        "Attempt_Code": "- Iterate from 1 to n, maintaining an empty list.\n- For each index i, compute factorial if i is even; use the formula i * (i + 1) // 2 for odd.\n- Handle edge cases: n = 0 should return an empty list.\n- Time complexity: O(n) for the iteration, O(k) for factorial (k is i value).\n- Space complexity: O(n) for the result list.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 14)",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ]
+        ],
+        "Total_solved": 23.0,
+        "Total_executed": 42,
+        "Pass_Rate": 0.5476190476190477
+    },
+    {
+        "Question": "def encode(message: str) -> str:\n    \"\"\"\n    Write a function that takes a message, and encodes in such a \n    way that it swaps case of all letters, replaces all vowels in \n    the message with the letter that appears 2 places ahead of that \n    vowel in the english alphabet. \n    Assume only letters. \n    \n    Examples:\n    >>> encode('test')\n    'TGST'\n    >>> encode('This is a message')\n    'tHKS KS C MGSSCGG'\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('TEST') == 'tgst'\n    assert candidate('Mudasir') == 'mWDCSKR'\n    assert candidate('YES') == 'ygs'\n    assert candidate('This is a message') == 'tHKS KS C MGSSCGG'\n    assert candidate('I DoNt KnOw WhAt tO WrItE') == 'k dQnT kNqW wHcT Tq wRkTg'\n\ndef test_check():\n    check(encode)\n\ntest_check()\n",
+        "Response": "```python\ndef encode(message: str) -> str:\n    \"\"\"\n    Write a function that takes a message, and encodes in such a \n    way that it swaps case of all letters, replaces all vowels in \n    the message with the letter that appears 2 places ahead of that \n    vowel in the english alphabet. \n    Assume only letters. \n    \n    Examples:\n    >>> encode('test')\n    'TGST'\n    >>> encode('This is a message')\n    'tHKS KS C MGSSCGG'\n    \"\"\"\n    def replace_vowel(vowel: str) -> str:\n        return chr(ord(vowel) + 2)\n    \n    result = []\n    \n    for char in message:\n        if char.lower() in 'aeiou':\n            new_char = replace_vowel(char.lower())\n            result.append(new_char.upper())\n        else:\n            new_char = char.upper() if char.islower() else char.lower()\n            result.append(new_char)\n    \n    return ''.join(result)\n```",
+        "Attempt_Code": "def encode(message: str) -> str:\n    \"\"\"\n    Write a function that takes a message, and encodes in such a \n    way that it swaps case of all letters, replaces all vowels in \n    the message with the letter that appears 2 places ahead of that \n    vowel in the english alphabet. \n    Assume only letters. \n    \n    Examples:\n    >>> encode('test')\n    'TGST'\n    >>> encode('This is a message')\n    'tHKS KS C MGSSCGG'\n    \"\"\"\n    def replace_vowel(vowel: str) -> str:\n        return chr(ord(vowel) + 2)\n    \n    result = []\n    \n    for char in message:\n        if char.lower() in 'aeiou':\n            new_char = replace_vowel(char.lower())\n            result.append(new_char.upper())\n        else:\n            new_char = char.upper() if char.islower() else char.lower()\n            result.append(new_char)\n    \n    return ''.join(result)",
+        "Solved": 0.0,
+        "Result_Str": "Partial credit: 0/5 tests passed",
+        "Generated_Topology": [
+            [
+                1,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                1,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 24.0,
+        "Total_executed": 44,
+        "Pass_Rate": 0.5454545454545454
+    },
+    {
+        "Question": "from typing import List\n\ndef pairs_sum_to_zero(l: List[int]) -> bool:\n    \"\"\"\n    pairs_sum_to_zero takes a list of integers as an input.\n    it returns True if there are two distinct elements in the list that\n    sum to zero, and False otherwise.\n    >>> pairs_sum_to_zero([1, 3, 5, 0])\n    False\n    >>> pairs_sum_to_zero([1, 3, -2, 1])\n    False\n    >>> pairs_sum_to_zero([1, 2, 3, 7])\n    False\n    >>> pairs_sum_to_zero([2, 4, -5, 3, 5, 7])\n    True\n    >>> pairs_sum_to_zero([1])\n    False\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([1, 3, 5, 0]) == False\n    assert candidate([1, 3, -2, 1]) == False\n    assert candidate([1, 2, 3, 7]) == False\n    assert candidate([2, 4, -5, 3, 5, 7]) == True\n    assert candidate([1]) == False\n    assert candidate([-3, 9, -1, 3, 2, 30]) == True\n    assert candidate([-3, 9, -1, 3, 2, 31]) == True\n    assert candidate([-3, 9, -1, 4, 2, 30]) == False\n    assert candidate([-3, 9, -1, 4, 2, 31]) == False\n\ndef test_check():\n    check(pairs_sum_to_zero)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef pairs_sum_to_zero(l: List[int]) -> bool:\n    \"\"\"\n    pairs_sum_to_zero takes a list of integers as an input.\n    it returns True if there are two distinct elements in the list that\n    sum to zero, and False otherwise.\n    >>> pairs_sum_to_zero([1, 3, 5, 0])\n    False\n    >>> pairs_sum_to_zero([1, 3, -2, 1])\n    False\n    >>> pairs_sum_to_zero([1, 2, 3, 7])\n    False\n    >>> pairs_sum_to_zero([2, 4, -5, 3, 5, 7])\n    True\n    >>> pairs_sum_to_zero([1])\n    False\n    \"\"\"\n    seen = set()\n    for number in l:\n        if -number in seen:\n            return True\n        seen.add(number)\n    return False\n```",
+        "Attempt_Code": "from typing import List\n\ndef pairs_sum_to_zero(l: List[int]) -> bool:\n    \"\"\"\n    pairs_sum_to_zero takes a list of integers as an input.\n    it returns True if there are two distinct elements in the list that\n    sum to zero, and False otherwise.\n    >>> pairs_sum_to_zero([1, 3, 5, 0])\n    False\n    >>> pairs_sum_to_zero([1, 3, -2, 1])\n    False\n    >>> pairs_sum_to_zero([1, 2, 3, 7])\n    False\n    >>> pairs_sum_to_zero([2, 4, -5, 3, 5, 7])\n    True\n    >>> pairs_sum_to_zero([1])\n    False\n    \"\"\"\n    seen = set()\n    for number in l:\n        if -number in seen:\n            return True\n        seen.add(number)\n    return False",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                1,
+                0,
+                0
+            ],
+            [
+                1,
+                1,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 25.0,
+        "Total_executed": 46,
+        "Pass_Rate": 0.5434782608695652
+    },
+    {
+        "Question": "from typing import Tuple\n\ndef bf(planet1: str, planet2: str) -> Tuple[str, ...]:\n    \"\"\"\n    There are eight planets in our solar system: the closerst to the Sun \n    is Mercury, the next one is Venus, then Earth, Mars, Jupiter, Saturn, \n    Uranus, Neptune.\n    Write a function that takes two planet names as strings planet1 and planet2. \n    The function should return a tuple containing all planets whose orbits are \n    located between the orbit of planet1 and the orbit of planet2, sorted by \n    the proximity to the sun. \n    The function should return an empty tuple if planet1 or planet2\n    are not correct planet names. \n    Examples\n    >>> bf('Jupiter', 'Neptune')\n    ('Saturn', 'Uranus')\n    >>> bf('Earth', 'Mercury')\n    'Venus'\n    >>> bf('Mercury', 'Uranus')\n    ('Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn')\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('Jupiter', 'Neptune') == ('Saturn', 'Uranus')\n    assert candidate('Earth', 'Mercury') == ('Venus',)\n    assert candidate('Mercury', 'Uranus') == ('Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn')\n    assert candidate('Neptune', 'Venus') == ('Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus')\n    assert candidate('Earth', 'Earth') == ()\n    assert candidate('Mars', 'Earth') == ()\n    assert candidate('Jupiter', 'Makemake') == ()\n\ndef test_check():\n    check(bf)\n\ntest_check()\n",
+        "Response": "- **Invalid input**: Empty strings or incorrect planet names lead to failure.\n- **Boundary cases**: Identical planet names as input should yield an empty tuple.\n- **Ordering**: Misinterpretation of orbit proximity can cause logical errors in output.\n- **Tuple return type**: Function must not return a string when one planet precedes another incorrectly.\n- **Duplicates**: Multiple calls with the same planet names should yield consistent results without redundancy. \n- **Case sensitivity**: Variations in case (e.g., 'mars' vs. 'Mars') may lead to failures if not handled. \n- **Performance**: Large or excessive calls for planet pairs may yield stability issues. \n- **Mutable operations**: Any unintended mutations affect returned tuple stability.",
+        "Attempt_Code": "- **Invalid input**: Empty strings or incorrect planet names lead to failure.\n- **Boundary cases**: Identical planet names as input should yield an empty tuple.\n- **Ordering**: Misinterpretation of orbit proximity can cause logical errors in output.\n- **Tuple return type**: Function must not return a string when one planet precedes another incorrectly.\n- **Duplicates**: Multiple calls with the same planet names should yield consistent results without redundancy. \n- **Case sensitivity**: Variations in case (e.g., 'mars' vs. 'Mars') may lead to failures if not handled. \n- **Performance**: Large or excessive calls for planet pairs may yield stability issues. \n- **Mutable operations**: Any unintended mutations affect returned tuple stability.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 23)",
+        "Generated_Topology": [
+            [
+                1,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ]
+        ],
+        "Total_solved": 26.0,
+        "Total_executed": 48,
+        "Pass_Rate": 0.5416666666666666
+    },
+    {
+        "Question": "from typing import List\n\ndef words_string(s: str) -> List[str]:\n    \"\"\"\n    You will be given a string of words separated by commas or spaces. Your task is\n    to split the string into words and return an array of the words.\n    \n    For example:\n    >>> words_string('Hi, my name is John')\n    ['Hi', 'my', 'name', 'is', 'John']\n    >>> words_string('One, two, three, four, five, six')\n    ['One', 'two', 'three', 'four', 'five', 'six']\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('Hi, my name is John') == ['Hi', 'my', 'name', 'is', 'John']\n    assert candidate('One, two, three, four, five, six') == ['One', 'two', 'three', 'four', 'five', 'six']\n    assert candidate('Hi, my name') == ['Hi', 'my', 'name']\n    assert candidate('One,, two, three, four, five, six,') == ['One', 'two', 'three', 'four', 'five', 'six']\n    assert candidate('') == []\n    assert candidate('ahmed     , gamal') == ['ahmed', 'gamal']\n\ndef test_check():\n    check(words_string)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef words_string(s: str) -> List[str]:\n    \"\"\"\n    You will be given a string of words separated by commas or spaces. Your task is\n    to split the string into words and return an array of the words.\n    \n    For example:\n    >>> words_string('Hi, my name is John')\n    ['Hi', 'my', 'name', 'is', 'John']\n    >>> words_string('One, two, three, four, five, six')\n    ['One', 'two', 'three', 'four', 'five', 'six']\n    \"\"\"\n    import re\n    return re.findall(r'\\S+', s.replace(',', ' '))\n```",
+        "Attempt_Code": "from typing import List\n\ndef words_string(s: str) -> List[str]:\n    \"\"\"\n    You will be given a string of words separated by commas or spaces. Your task is\n    to split the string into words and return an array of the words.\n    \n    For example:\n    >>> words_string('Hi, my name is John')\n    ['Hi', 'my', 'name', 'is', 'John']\n    >>> words_string('One, two, three, four, five, six')\n    ['One', 'two', 'three', 'four', 'five', 'six']\n    \"\"\"\n    import re\n    return re.findall(r'\\S+', s.replace(',', ' '))",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                1,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ]
+        ],
+        "Total_solved": 28.0,
+        "Total_executed": 50,
+        "Pass_Rate": 0.56
+    },
+    {
+        "Question": "from typing import Union\n\ndef compare_one(a: Union[int, float, str], b: Union[int, float, str]) -> Union[int, float, str, None]:\n    \"\"\"\n    Create a function that takes integers, floats, or strings representing\n    real numbers, and returns the larger variable in its given variable type.\n    Return None if the values are equal.\n    Note: If a real number is represented as a string, the floating point might be . or ,\n\n    >>> compare_one(1, 2.5)\n    2.5\n    >>> compare_one(1, '2,3')\n    '2,3'\n    >>> compare_one('5,1', '6')\n    '6'\n    >>> compare_one('1', 1)\n    None\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(1, 2) == 2\n    assert candidate(1, 2.5) == 2.5\n    assert candidate(2, 3) == 3\n    assert candidate(5, 6) == 6\n    assert candidate(1, '2,3') == '2,3'\n    assert candidate('5,1', '6') == '6'\n    assert candidate('1', '2') == '2'\n    assert candidate('1', 1) == None\n\ndef test_check():\n    check(compare_one)\n\ntest_check()\n",
+        "Response": "- Normalize inputs by converting strings to floats or ints, handling both '.' and ','.\n- Compare values based on type, prioritizing int/float over string for comparison.\n- Return the larger value, maintaining the original type; return None if equal.\n- Handle edge cases with mixed types and malformed strings (invalid numbers).\n- Time complexity is O(1) for comparisons; space is O(1) as no additional data structures are needed.",
+        "Attempt_Code": "- Normalize inputs by converting strings to floats or ints, handling both '.' and ','.\n- Compare values based on type, prioritizing int/float over string for comparison.\n- Return the larger value, maintaining the original type; return None if equal.\n- Handle edge cases with mixed types and malformed strings (invalid numbers).\n- Time complexity is O(1) for comparisons; space is O(1) as no additional data structures are needed.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 20)",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                1,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                1,
+                0,
+                1,
+                0
+            ]
+        ],
+        "Total_solved": 29.0,
+        "Total_executed": 52,
+        "Pass_Rate": 0.5576923076923077
+    },
+    {
+        "Question": "from typing import List\n\ndef strange_sort_list(lst: List[int]) -> List[int]:\n    \"\"\"\n    Given list of integers, return list in strange order.\n    Strange sorting, is when you start with the minimum value,\n    then maximum of the remaining integers, then minimum and so on.\n\n    Examples:\n    >>> strange_sort_list([1, 2, 3, 4])\n    [1, 4, 2, 3]\n    >>> strange_sort_list([5, 5, 5, 5])\n    [5, 5, 5, 5]\n    >>> strange_sort_list([])\n    []\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([1, 2, 3, 4]) == [1, 4, 2, 3]\n    assert candidate([5, 6, 7, 8, 9]) == [5, 9, 6, 8, 7]\n    assert candidate([1, 2, 3, 4, 5]) == [1, 5, 2, 4, 3]\n    assert candidate([5, 6, 7, 8, 9, 1]) == [1, 9, 5, 8, 6, 7]\n    assert candidate([5, 5, 5, 5]) == [5, 5, 5, 5]\n    assert candidate([]) == []\n    assert candidate([1, 2, 3, 4, 5, 6, 7, 8]) == [1, 8, 2, 7, 3, 6, 4, 5]\n    assert candidate([0, 2, 2, 2, 5, 5, -5, -5]) == [-5, 5, -5, 5, 0, 2, 2, 2]\n    assert candidate([111111]) == [111111]\n\ndef test_check():\n    check(strange_sort_list)\n\ntest_check()\n",
+        "Response": "- Sort the list to access min/max easily.\n- Use two pointers: one starting at the beginning (min) and another at the end (max).\n- Alternate adding values from both ends to the result list.\n- Handle edge cases: empty list and all identical elements.\n- Time complexity is O(n log n) due to sorting; space complexity is O(n) for output.",
+        "Attempt_Code": "- Sort the list to access min/max easily.\n- Use two pointers: one starting at the beginning (min) and another at the end (max).\n- Alternate adding values from both ends to the result list.\n- Handle edge cases: empty list and all identical elements.\n- Time complexity is O(n log n) due to sorting; space complexity is O(n) for output.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 18)",
+        "Generated_Topology": [
+            [
+                1,
+                1,
+                0,
+                1
+            ],
+            [
+                1,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ]
+        ],
+        "Total_solved": 30.0,
+        "Total_executed": 54,
+        "Pass_Rate": 0.5555555555555556
+    },
+    {
+        "Question": "def is_simple_power(x: int, n: int) -> bool:\n    \"\"\"Your task is to write a function that returns true if a number x is a simple\n    power of n and false in other cases.\n    x is a simple power of n if n**int=x\n    For example:\n    >>> is_simple_power(1, 4)\n    True\n    >>> is_simple_power(2, 2)\n    True\n    >>> is_simple_power(8, 2)\n    True\n    >>> is_simple_power(3, 2)\n    False\n    >>> is_simple_power(3, 1)\n    False\n    >>> is_simple_power(5, 3)\n    False\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(16, 2) == True\n    assert candidate(143214, 16) == False\n    assert candidate(4, 2) == True\n    assert candidate(9, 3) == True\n    assert candidate(16, 4) == True\n    assert candidate(24, 2) == False\n    assert candidate(128, 4) == False\n    assert candidate(12, 6) == False\n    assert candidate(1, 1) == True\n    assert candidate(1, 12) == True\n\ndef test_check():\n    check(is_simple_power)\n\ntest_check()\n",
+        "Response": "- **Zero and Negative Values**: `n` cannot be zero or negative; `x` should also be non-negative.\n- **Edge Cases**: `x = 1` should return `True` for any valid `n` (including `n = 1`).\n- **Large Values**: Potential overflow issues when calculating large powers.\n- **Type Coercion**: Ensure input values are strictly integers to avoid unexpected behavior.\n- **Duplicates/Redundancies**: Check how duplicates or repetitive calculations are handled.\n- **Performance**: Efficiency when checking powers for large values of `n`.\n- **Boundary Cases**: Inputs near computational limits for integer representation. \n- **Logical Mismatch**: Differentiation for `n = 1`, which theoretically raises any number to zero power but yields a mismatch in logic as per specification.",
+        "Attempt_Code": "- **Zero and Negative Values**: `n` cannot be zero or negative; `x` should also be non-negative.\n- **Edge Cases**: `x = 1` should return `True` for any valid `n` (including `n = 1`).\n- **Large Values**: Potential overflow issues when calculating large powers.\n- **Type Coercion**: Ensure input values are strictly integers to avoid unexpected behavior.\n- **Duplicates/Redundancies**: Check how duplicates or repetitive calculations are handled.\n- **Performance**: Efficiency when checking powers for large values of `n`.\n- **Boundary Cases**: Inputs near computational limits for integer representation. \n- **Logical Mismatch**: Differentiation for `n = 1`, which theoretically raises any number to zero power but yields a mismatch in logic as per specification.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 20)",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ]
+        ],
+        "Total_solved": 31.0,
+        "Total_executed": 56,
+        "Pass_Rate": 0.5535714285714286
+    },
+    {
+        "Question": "from typing import List\n\ndef order_by_points(nums: List[int]) -> List[int]:\n    \"\"\"\n    Write a function which sorts the given list of integers\n    in ascending order according to the sum of their digits.\n    Note: if there are several items with similar sum of their digits,\n    order them based on their index in original list.\n\n    For example:\n    >>> order_by_points([1, 11, -1, -11, -12])\n    [-1, -11, 1, -12, 11]\n    >>> order_by_points([])\n    []\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]\n    assert candidate([1234, 423, 463, 145, 2, 423, 423, 53, 6, 37, 3457, 3, 56, 0, 46]) == [0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457]\n    assert candidate([]) == []\n    assert candidate([1, -11, -32, 43, 54, -98, 2, -3]) == [-3, -32, -98, -11, 1, 2, 43, 54]\n    assert candidate([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) == [1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9]\n    assert candidate([0, 6, 6, -76, -21, 23, 4]) == [-76, -21, 0, 4, 23, 6, 6]\n\ndef test_check():\n    check(order_by_points)\n\ntest_check()\n",
+        "Response": "- Calculate the digit sum for each number using a helper function.\n- Use Python's `sorted()` with a custom key that combines digit sum and original index.\n- Handle negative numbers by taking their absolute value for digit sums.\n- Edge case: handle an empty list by returning it as is.\n- Time complexity: O(n log n) due to sorting; space complexity: O(n) for storing results.",
+        "Attempt_Code": "- Calculate the digit sum for each number using a helper function.\n- Use Python's `sorted()` with a custom key that combines digit sum and original index.\n- Handle negative numbers by taking their absolute value for digit sums.\n- Edge case: handle an empty list by returning it as is.\n- Time complexity: O(n log n) due to sorting; space complexity: O(n) for storing results.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: unterminated string literal (detected at line 18) (<string>, line 18)",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "Total_solved": 32.0,
+        "Total_executed": 58,
+        "Pass_Rate": 0.5517241379310345
+    },
+    {
+        "Question": "def make_palindrome(string: str) -> str:\n    \"\"\" Find the shortest palindrome that begins with a supplied string.\n    Algorithm idea is simple:\n    - Find the longest postfix of supplied string that is a palindrome.\n    - Append to the end of the string reverse of a string prefix that comes before the palindromic suffix.\n    >>> make_palindrome('')\n    ''\n    >>> make_palindrome('cat')\n    'catac'\n    >>> make_palindrome('cata')\n    'catac'\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('') == ''\n    assert candidate('x') == 'x'\n    assert candidate('xyz') == 'xyzyx'\n    assert candidate('xyx') == 'xyx'\n    assert candidate('jerry') == 'jerryrrej'\n\ndef test_check():\n    check(make_palindrome)\n\ntest_check()\n",
+        "Response": "```python\ndef make_palindrome(string: str) -> str:\n    \"\"\" Find the shortest palindrome that begins with a supplied string.\n    Algorithm idea is simple:\n    - Find the longest postfix of supplied string that is a palindrome.\n    - Append to the end of the string reverse of a string prefix that comes before the palindromic suffix.\n    >>> make_palindrome('')\n    ''\n    >>> make_palindrome('cat')\n    'catac'\n    >>> make_palindrome('cata')\n    'catac'\n    \"\"\"\n    if not string:\n        return string\n\n    def is_palindrome(s: str) -> bool:\n        return s == s[::-1]\n\n    # Find the longest palindromic suffix\n    for i in range(len(string)):\n        if is_palindrome(string[i:]):\n            # The part we need to append is the reverse of the prefix\n            prefix = string[:i]\n            return string + prefix[::-1]\n\n    return string  # Fallback in case no suffix (should return the input itself)\n```",
+        "Attempt_Code": "def make_palindrome(string: str) -> str:\n    \"\"\" Find the shortest palindrome that begins with a supplied string.\n    Algorithm idea is simple:\n    - Find the longest postfix of supplied string that is a palindrome.\n    - Append to the end of the string reverse of a string prefix that comes before the palindromic suffix.\n    >>> make_palindrome('')\n    ''\n    >>> make_palindrome('cat')\n    'catac'\n    >>> make_palindrome('cata')\n    'catac'\n    \"\"\"\n    if not string:\n        return string\n\n    def is_palindrome(s: str) -> bool:\n        return s == s[::-1]\n\n    # Find the longest palindromic suffix\n    for i in range(len(string)):\n        if is_palindrome(string[i:]):\n            # The part we need to append is the reverse of the prefix\n            prefix = string[:i]\n            return string + prefix[::-1]\n\n    return string  # Fallback in case no suffix (should return the input itself)",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                1,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                1,
+                1,
+                1
+            ]
+        ],
+        "Total_solved": 34.0,
+        "Total_executed": 60,
+        "Pass_Rate": 0.5666666666666667
+    },
+    {
+        "Question": "def special_factorial(n: int) -> int:\n    \"\"\"The Brazilian factorial is defined as:\n    brazilian_factorial(n) = n! * (n-1)! * (n-2)! * ... * 1!\n    where n > 0\n\n    For example:\n    >>> special_factorial(4)\n    288\n\n    The function will receive an integer as input and should return the special\n    factorial of this integer.\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(4) == 288\n    assert candidate(5) == 34560\n    assert candidate(7) == 125411328000\n    assert candidate(1) == 1\n\ndef test_check():\n    check(special_factorial)\n\ntest_check()\n",
+        "Response": "```python\ndef special_factorial(n: int) -> int:\n    \"\"\"The Brazilian factorial is defined as:\n    brazilian_factorial(n) = n! * (n-1)! * (n-2)! * ... * 1!\n    where n > 0\n\n    For example:\n    >>> special_factorial(4)\n    288\n\n    The function will receive an integer as input and should return the special\n    factorial of this integer.\n    \"\"\"\n    from math import factorial\n\n    # Handle the case where n is less than or equal to 0\n    if n <= 0:\n        return 1  # Since the factorial is not defined for non-positive integers, return 1 (convention)\n\n    result = 1\n    # Calculate the product of factorials from n! down to 1!\n    for i in range(1, n + 1):\n        result *= factorial(i)\n\n    return result\n```",
+        "Attempt_Code": "def special_factorial(n: int) -> int:\n    \"\"\"The Brazilian factorial is defined as:\n    brazilian_factorial(n) = n! * (n-1)! * (n-2)! * ... * 1!\n    where n > 0\n\n    For example:\n    >>> special_factorial(4)\n    288\n\n    The function will receive an integer as input and should return the special\n    factorial of this integer.\n    \"\"\"\n    from math import factorial\n\n    # Handle the case where n is less than or equal to 0\n    if n <= 0:\n        return 1  # Since the factorial is not defined for non-positive integers, return 1 (convention)\n\n    result = 1\n    # Calculate the product of factorials from n! down to 1!\n    for i in range(1, n + 1):\n        result *= factorial(i)\n\n    return result",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                1,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                1
+            ]
+        ],
+        "Total_solved": 36.0,
+        "Total_executed": 62,
+        "Pass_Rate": 0.5806451612903226
+    },
+    {
+        "Question": "def fib4(n: int) -> int:\n    \"\"\"The Fib4 number sequence is a sequence similar to the Fibbonacci sequnece that's defined as follows:\n    fib4(0) -> 0\n    fib4(1) -> 0\n    fib4(2) -> 2\n    fib4(3) -> 0\n    fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4).\n    Please write a function to efficiently compute the n-th element of the fib4 number sequence.  Do not use recursion.\n    >>> fib4(5)\n    4\n    >>> fib4(6)\n    8\n    >>> fib4(7)\n    14\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(5) == 4\n    assert candidate(8) == 28\n    assert candidate(10) == 104\n    assert candidate(12) == 386\n\ndef test_check():\n    check(fib4)\n\ntest_check()\n",
+        "Response": "- Boundary cases: Check for inputs less than 0 (negative integers) and ensure proper handling.\n- Missing definitions: The sequence does not specify behavior for `n=0` to `n=3` consistently.\n- Large sizes: Performance degradation for very large `n` could lead to inefficiencies.\n- Duplicates: Handling of non-unique input values.\n- Stability: Function should maintain accuracy and performance across various types of input including edge cases.\n- Special numbers: Verify behavior with input of 0 (fixed results) and performance with large Fibonacci-like growth.",
+        "Attempt_Code": "- Boundary cases: Check for inputs less than 0 (negative integers) and ensure proper handling.\n- Missing definitions: The sequence does not specify behavior for `n=0` to `n=3` consistently.\n- Large sizes: Performance degradation for very large `n` could lead to inefficiencies.\n- Duplicates: Handling of non-unique input values.\n- Stability: Function should maintain accuracy and performance across various types of input including edge cases.\n- Special numbers: Verify behavior with input of 0 (fixed results) and performance with large Fibonacci-like growth.",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 17)",
+        "Generated_Topology": [
+            [
+                0,
+                1,
+                1,
+                1
+            ],
+            [
+                0,
+                1,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ]
+        ],
+        "Total_solved": 37.0,
+        "Total_executed": 64,
+        "Pass_Rate": 0.578125
+    }
+]

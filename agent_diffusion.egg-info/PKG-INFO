@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: agent_diffusion
+Version: 0.1.0
+Summary: Guided Topology Diffusion for Multi-Agent Systems
+Home-page: https://github.com/your/repo
+Author: Your Name
+Author-email: your.email@example.com
+Requires-Python: >=3.9
+Dynamic: author
+Dynamic: author-email
+Dynamic: home-page
+Dynamic: requires-python
+Dynamic: summary

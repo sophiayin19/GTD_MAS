@@ -1,0 +1,169 @@
+import re
+from typing import Tuple
+
+def humaneval_data_process(dataset: list) -> list:
+    """
+    Processes the raw Humaneval dataset.
+    """
+    processed_dataset = []
+    for record in dataset:
+        processed_dataset.append({
+            "task": record["prompt"],
+            "test": record["test"],
+            "entry_point": record["entry_point"],
+            "answer": "" # Placeholder, as correctness is determined by tests
+        })
+    return processed_dataset
+
+def humaneval_get_predict(model_response: str) -> str:
+    """
+    Extracts the Python code block from the model's response.
+    It looks for a ```python ... ``` block and extracts the content.
+    If not found, it assumes the entire response is the code.
+    Includes improved extraction logic for various response formats.
+    """
+    # Try to extract from ```python blocks first
+    if '```python' in model_response:
+        match = re.search(r"```python\n(.*?)\n```", model_response, re.DOTALL)
+        if match:
+            return match.group(1).strip()
+    
+    # Try to extract from generic ``` blocks
+    if '```' in model_response:
+        match = re.search(r"```\n(.*?)\n```", model_response, re.DOTALL)
+        if match:
+            return match.group(1).strip()
+    
+    # Try to extract function definitions
+    if 'def ' in model_response:
+        # Look for function definitions and extract them
+        lines = model_response.split('\n')
+        code_lines = []
+        in_function = False
+        indent_level = 0
+        
+        for line in lines:
+            stripped = line.strip()
+            if stripped.startswith('def '):
+                in_function = True
+                indent_level = len(line) - len(line.lstrip())
+                code_lines.append(line)
+            elif in_function:
+                current_indent = len(line) - len(line.lstrip())
+                if line.strip() == '':
+                    code_lines.append(line)
+                elif current_indent > indent_level:
+                    code_lines.append(line)
+                else:
+                    break
+        
+        if code_lines:
+            return '\n'.join(code_lines).strip()
+    
+    # Fallback: return the entire response cleaned up
+    return model_response.strip()
+
+def clean_code(code: str) -> str:
+    """
+    Clean and validate generated code to fix common syntax issues.
+    """
+    # Remove any markdown formatting
+    if '```python' in code:
+        match = re.search(r"```python\n(.*?)\n```", code, re.DOTALL)
+        if match:
+            code = match.group(1)
+    elif '```' in code:
+        match = re.search(r"```\n(.*?)\n```", code, re.DOTALL)
+        if match:
+            code = match.group(1)
+    
+    # Remove any leading/trailing whitespace
+    code = code.strip()
+    
+    # Fix common indentation issues
+    lines = code.split('\n')
+    cleaned_lines = []
+    for line in lines:
+        # Skip empty lines
+        if not line.strip():
+            continue
+        # Fix common indentation problems
+        if line.startswith('    ') or line.startswith('\t'):
+            cleaned_lines.append(line)
+        elif line.strip().startswith('def ') or line.strip().startswith('class '):
+            cleaned_lines.append(line)
+        elif line.strip().startswith('if ') or line.strip().startswith('for ') or line.strip().startswith('while '):
+            cleaned_lines.append(line)
+        elif line.strip().startswith('return ') or line.strip().startswith('yield '):
+            cleaned_lines.append('    ' + line.strip())
+        elif line.strip() and not line.startswith(' '):
+            # This might be a statement that should be indented
+            cleaned_lines.append('    ' + line.strip())
+        else:
+            cleaned_lines.append(line)
+    
+    return '\n'.join(cleaned_lines)
+
+def check_correctness(prompt: str, completion: str, test: str) -> Tuple[float, str]:
+    """
+    Evaluates the generated code against the provided test cases with partial credit.
+    Returns a decimal score (0.0 to 1.0) based on the percentage of test cases that pass.
+    Includes improved syntax error handling and code cleaning.
+    """
+    # Clean the completion code first
+    cleaned_completion = clean_code(completion)
+    
+    # Try to validate the syntax first
+    try:
+        import ast
+        ast.parse(cleaned_completion)
+    except SyntaxError as e:
+        return 0.0, f"Syntax error in generated code: {e}"
+    
+    program = f"{prompt}\n{cleaned_completion}\n{test}"
+    
+    try:
+        exec_globals = {}
+        exec(program, exec_globals)
+        return 1.0, "All tests passed"
+    except AssertionError as e:
+        # Try to run individual test cases to see how many pass
+        try:
+            tree = ast.parse(test)
+            assert_count = 0
+            passed_count = 0
+            
+            # Count total assertions
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Assert):
+                    assert_count += 1
+            
+            # Try to run individual assertions
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Assert):
+                    try:
+                        # Create a minimal test for this assertion
+                        individual_test = f"def check_single():\n    {ast.unparse(node)}\ncheck_single()"
+                        individual_program = f"{prompt}\n{cleaned_completion}\n{individual_test}"
+                        exec_globals_individual = {}
+                        exec(individual_program, exec_globals_individual)
+                        passed_count += 1
+                    except:
+                        pass
+            
+            # Return the percentage of tests that passed
+            if assert_count > 0:
+                score = passed_count / assert_count
+                return score, f"Partial credit: {passed_count}/{assert_count} tests passed"
+            else:
+                return 0.0, "No assertions found"
+        except Exception as parse_error:
+            return 0.0, f"AssertionError: {e} (parse error: {parse_error})"
+    except SyntaxError as e:
+        return 0.0, f"Syntax error in full program: {e}"
+    except NameError as e:
+        return 0.0, f"Name error (undefined variable): {e}"
+    except TypeError as e:
+        return 0.0, f"Type error: {e}"
+    except Exception as e:
+        return 0.0, f"Execution failed: {type(e).__name__}: {e}"

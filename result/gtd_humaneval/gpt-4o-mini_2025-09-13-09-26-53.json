@@ -1,0 +1,30 @@
+[
+    {
+        "Question": "def encrypt(s: str) -> str:\n    \"\"\"Create a function encrypt that takes a string as an argument and\n    returns a string encrypted with the alphabet being rotated. \n    The alphabet should be rotated in a manner such that the letters \n    shift down by two multiplied to two places.\n    For example:\n    >>> encrypt('hi')\n    'lm'\n    >>> encrypt('asdfghjkl')\n    'ewhjklnop'\n    >>> encrypt('gf')\n    'kj'\n    >>> encrypt('et')\n    'ix'\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('hi') == 'lm'\n    assert candidate('asdfghjkl') == 'ewhjklnop'\n    assert candidate('gf') == 'kj'\n    assert candidate('et') == 'ix'\n    assert candidate('faewfawefaewg') == 'jeiajeaijeiak'\n    assert candidate('hellomyfriend') == 'lippsqcjvmirh'\n    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh') == 'hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl'\n    assert candidate('a') == 'e'\n\ndef test_check():\n    check(encrypt)\n\ntest_check()\n",
+        "Response": "```python\n    encrypted = []\n    for char in s:\n        if char.isalpha():\n            start = ord('a') if char.islower() else ord('A')\n            new_char = chr(start + (ord(char) - start + 4) % 26)\n            encrypted.append(new_char)\n    return ''.join(encrypted)\n```",
+        "Attempt_Code": "encrypted = []\n    for char in s:\n        if char.isalpha():\n            start = ord('a') if char.islower() else ord('A')\n            new_char = chr(start + (ord(char) - start + 4) % 26)\n            encrypted.append(new_char)\n    return ''.join(encrypted)",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: IndentationError: unexpected indent (<string>, line 18)",
+        "Generated_Topology": [
+            [
+                0,
+                0,
+                0
+            ],
+            [
+                1,
+                0,
+                0
+            ],
+            [
+                1,
+                1,
+                0
+            ]
+        ],
+        "Total_solved": 0.0,
+        "Total_executed": 2,
+        "Pass_Rate": 0.0
+    }
+]

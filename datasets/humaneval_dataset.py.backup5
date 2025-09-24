@@ -1,0 +1,106 @@
+import re
+from typing import Tuple
+
+def humaneval_data_process(dataset: list) -> list:
+    """
+    Processes the raw Humaneval dataset.
+    """
+    processed_dataset = []
+    for record in dataset:
+        processed_dataset.append({
+            "task": record["prompt"],
+            "test": record["test"],
+            "entry_point": record["entry_point"],
+            "answer": "" # Placeholder, as correctness is determined by tests
+        })
+    return processed_dataset
+
+def humaneval_get_predict(model_response: str) -> str:
+    """
+    Extracts the Python code block from the model's response with improved logic.
+    """
+    # Try multiple extraction strategies
+    strategies = [
+        # Strategy 1: Look for ```python blocks
+        lambda text: re.search(r"```python\n(.*?)\n```", text, re.DOTALL),
+        # Strategy 2: Look for generic ``` blocks
+        lambda text: re.search(r"```\n(.*?)\n```", text, re.DOTALL),
+        # Strategy 3: Look for function definitions
+        lambda text: re.search(r"(def\s+\w+\([^)]*\)[^:]*:.*?)(?=\n\ndef|\n\nclass|\n\nif|\n\nfor|\n\nwhile|\Z)", text, re.DOTALL),
+        # Strategy 4: Look for any code-like content
+        lambda text: re.search(r"(def\s+\w+\([^)]*\)[^:]*:.*)", text, re.DOTALL)
+    ]
+    
+    for strategy in strategies:
+        match = strategy(model_response)
+        if match:
+            code = match.group(1).strip()
+            if code and 'def ' in code:
+                return code
+    
+    # Fallback: return the entire response
+    return model_response.strip()
+
+def clean_and_fix_code(code: str) -> str:
+    """
+    Clean and fix common issues in generated code.
+    """
+    if not code:
+        return code
+    
+    lines = code.split('\n')
+    cleaned_lines = []
+    
+    for line in lines:
+        # Skip empty lines
+        if not line.strip():
+            continue
+            
+        # Fix common indentation issues
+        if line.strip().startswith('return ') and not line.startswith('    '):
+            cleaned_lines.append('    ' + line.strip())
+        elif line.strip().startswith('if ') and not line.startswith('    '):
+            cleaned_lines.append('    ' + line.strip())
+        elif line.strip().startswith('for ') and not line.startswith('    '):
+            cleaned_lines.append('    ' + line.strip())
+        elif line.strip().startswith('while ') and not line.startswith('    '):
+            cleaned_lines.append('    ' + line.strip())
+        else:
+            cleaned_lines.append(line)
+    
+    return '\n'.join(cleaned_lines)
+
+def check_correctness(prompt: str, completion: str, test: str) -> Tuple[float, str]:
+    """
+    Evaluates the generated code with improved extraction and cleaning.
+    """
+    # Extract and clean the code
+    extracted_code = humaneval_get_predict(completion)
+    cleaned_code = clean_and_fix_code(extracted_code)
+    
+    # Try the original completion first
+    program = f"{prompt}\n{completion}\n{test}"
+    try:
+        exec_globals = {}
+        exec(program, exec_globals)
+        return 1.0, "All tests passed"
+    except:
+        pass
+    
+    # Try the extracted code
+    program = f"{prompt}\n{extracted_code}\n{test}"
+    try:
+        exec_globals = {}
+        exec(program, exec_globals)
+        return 1.0, "All tests passed (extracted)"
+    except:
+        pass
+    
+    # Try the cleaned code
+    program = f"{prompt}\n{cleaned_code}\n{test}"
+    try:
+        exec_globals = {}
+        exec(program, exec_globals)
+        return 1.0, "All tests passed (cleaned)"
+    except Exception as e:
+        return 0.0, f"Execution failed: {type(e).__name__}: {e}"

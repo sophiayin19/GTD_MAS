@@ -1,0 +1,27 @@
+# 核心深度学习包
+torch-geometric
+transformers
+sentence-transformers
+
+# API包
+openai
+aiohttp
+aiofiles
+
+# 工具包
+class-registry
+shortuuid
+python-dotenv
+requests
+tqdm
+PyYAML
+jsonlines
+
+# 数据处理
+pandas
+matplotlib
+networkx
+
+# 可选包（如果需要）
+jupyter
+notebook

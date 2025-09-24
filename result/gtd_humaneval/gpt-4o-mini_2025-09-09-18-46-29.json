@@ -1,0 +1,162 @@
+[
+    {
+        "Question": "def encrypt(s: str) -> str:\n    \"\"\"Create a function encrypt that takes a string as an argument and\n    returns a string encrypted with the alphabet being rotated. \n    The alphabet should be rotated in a manner such that the letters \n    shift down by two multiplied to two places.\n    For example:\n    >>> encrypt('hi')\n    'lm'\n    >>> encrypt('asdfghjkl')\n    'ewhjklnop'\n    >>> encrypt('gf')\n    'kj'\n    >>> encrypt('et')\n    'ix'\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('hi') == 'lm'\n    assert candidate('asdfghjkl') == 'ewhjklnop'\n    assert candidate('gf') == 'kj'\n    assert candidate('et') == 'ix'\n    assert candidate('faewfawefaewg') == 'jeiajeaijeiak'\n    assert candidate('hellomyfriend') == 'lippsqcjvmirh'\n    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh') == 'hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl'\n    assert candidate('a') == 'e'\n\ndef test_check():\n    check(encrypt)\n\ntest_check()\n",
+        "Response": "```python\ndef encrypt(s: str) -> str:\n    \"\"\"Create a function encrypt that takes a string as an argument and\n    returns a string encrypted with the alphabet being rotated. \n    The alphabet should be rotated in a manner such that the letters \n    shift down by two multiplied to two places.\n    For example:\n    >>> encrypt('hi')\n    'lm'\n    >>> encrypt('asdfghjkl')\n    'ewhjklnop'\n    >>> encrypt('gf')\n    'kj'\n    >>> encrypt('et')\n    'ix'\n    \"\"\"\n    result = []\n    for char in s:\n        if char.isalpha():\n            offset = (ord(char) - ord('a') + 4) % 26  # Rotate by 4\n            result.append(chr(ord('a') + offset))\n        else:\n            result.append(char)  # Preserve non-alphabetic characters\n    return ''.join(result)\n```\nthe answer is None",
+        "Attempt_Code": "def encrypt(s: str) -> str:\n    \"\"\"Create a function encrypt that takes a string as an argument and\n    returns a string encrypted with the alphabet being rotated. \n    The alphabet should be rotated in a manner such that the letters \n    shift down by two multiplied to two places.\n    For example:\n    >>> encrypt('hi')\n    'lm'\n    >>> encrypt('asdfghjkl')\n    'ewhjklnop'\n    >>> encrypt('gf')\n    'kj'\n    >>> encrypt('et')\n    'ix'\n    \"\"\"\n    result = []\n    for char in s:\n        if char.isalpha():\n            offset = (ord(char) - ord('a') + 4) % 26  # Rotate by 4\n            result.append(chr(ord('a') + offset))\n        else:\n            result.append(char)  # Preserve non-alphabetic characters\n    return ''.join(result)",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 1.0,
+        "Total_executed": 2,
+        "Pass_Rate": 0.5
+    },
+    {
+        "Question": "from typing import List\n\ndef add(lst: List[int]) -> int:\n    \"\"\"Given a non-empty list of integers lst. add the even elements that are at odd indices..\n\n\n    Examples:\n    >>> add([4, 2, 6, 7])\n    2\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([4, 88]) == 88\n    assert candidate([4, 5, 6, 7, 2, 122]) == 122\n    assert candidate([4, 0, 6, 7]) == 0\n    assert candidate([4, 4, 6, 8]) == 12\n\ndef test_check():\n    check(add)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef add(lst: List[int]) -> int:\n    \"\"\"Given a non-empty list of integers lst, add the even elements that are at odd indices.\n\n    Examples:\n    >>> add([4, 2, 6, 7])\n    2\n    \"\"\"\n    return sum(lst[i] for i in range(1, len(lst), 2) if lst[i] % 2 == 0)\n```\nthe answer is None",
+        "Attempt_Code": "from typing import List\n\ndef add(lst: List[int]) -> int:\n    \"\"\"Given a non-empty list of integers lst, add the even elements that are at odd indices.\n\n    Examples:\n    >>> add([4, 2, 6, 7])\n    2\n    \"\"\"\n    return sum(lst[i] for i in range(1, len(lst), 2) if lst[i] % 2 == 0)",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                1
+            ]
+        ],
+        "Total_solved": 3.0,
+        "Total_executed": 4,
+        "Pass_Rate": 0.75
+    },
+    {
+        "Question": "def fibfib(n: int) -> int:\n    \"\"\"The FibFib number sequence is a sequence similar to the Fibbonacci sequnece that's defined as follows:\n    fibfib(0) == 0\n    fibfib(1) == 0\n    fibfib(2) == 1\n    fibfib(n) == fibfib(n-1) + fibfib(n-2) + fibfib(n-3).\n    Please write a function to efficiently compute the n-th element of the fibfib number sequence.\n    >>> fibfib(1)\n    0\n    >>> fibfib(5)\n    4\n    >>> fibfib(8)\n    24\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(2) == 1\n    assert candidate(1) == 0\n    assert candidate(5) == 4\n    assert candidate(8) == 24\n    assert candidate(10) == 81\n    assert candidate(12) == 274\n    assert candidate(14) == 927\n\ndef test_check():\n    check(fibfib)\n\ntest_check()\n",
+        "Response": "Use a single function with memoization to enhance efficiency. This avoids redundant calculations and optimizes for time complexity. Here's a minimal design:\n\n```python\ndef fibfib(n: int, memo={}):\n    if n in memo:\n        return memo[n]\n    if n == 0 or n == 1:\n        return 0\n    if n == 2:\n        return 1\n    memo[n] = fibfib(n - 1, memo) + fibfib(n - 2, memo) + fibfib(n - 3, memo)\n    return memo[n]\n```\nthe answer is Error occurred: unterminated string literal (detected at line 1) (<string>, line 1)",
+        "Attempt_Code": "def fibfib(n: int, memo={}):\n    if n in memo:\n        return memo[n]\n    if n == 0 or n == 1:\n        return 0\n    if n == 2:\n        return 1\n    memo[n] = fibfib(n - 1, memo) + fibfib(n - 2, memo) + fibfib(n - 3, memo)\n    return memo[n]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 5.0,
+        "Total_executed": 6,
+        "Pass_Rate": 0.8333333333333334
+    },
+    {
+        "Question": "from typing import List, Any\n\ndef filter_integers(values: List[Any]) -> List[int]:\n    \"\"\" Filter given list of any python values only for integers\n    >>> filter_integers(['a', 3.14, 5])\n    [5]\n    >>> filter_integers([1, 2, 3, 'abc', {  }, []])\n    [1, 2, 3]\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([]) == []\n    assert candidate([4, {  }, [], 23.2, 9, 'adasd']) == [4, 9]\n    assert candidate([3, 'c', 3, 3, 'a', 'b']) == [3, 3, 3]\n\ndef test_check():\n    check(filter_integers)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List, Any\n\ndef filter_integers(values: List[Any]) -> List[int]:\n    \"\"\" Filter given list of any python values only for integers\n    >>> filter_integers(['a', 3.14, 5])\n    [5]\n    >>> filter_integers([1, 2, 3, 'abc', {  }, []])\n    [1, 2, 3]\n    \"\"\"\n    return [value for value in values if isinstance(value, int)]\n```\nthe answer is None",
+        "Attempt_Code": "from typing import List, Any\n\ndef filter_integers(values: List[Any]) -> List[int]:\n    \"\"\" Filter given list of any python values only for integers\n    >>> filter_integers(['a', 3.14, 5])\n    [5]\n    >>> filter_integers([1, 2, 3, 'abc', {  }, []])\n    [1, 2, 3]\n    \"\"\"\n    return [value for value in values if isinstance(value, int)]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 6.0,
+        "Total_executed": 8,
+        "Pass_Rate": 0.75
+    },
+    {
+        "Question": "from typing import List\n\ndef parse_music(music_string: str) -> List[int]:\n    \"\"\" Input to this function is a string representing musical notes in a special ASCII format.\n    Your task is to parse this string and return list of integers corresponding to how many beats does each\n    not last.\n\n    Here is a legend:\n    'o' - whole note, lasts four beats\n    'o|' - half note, lasts two beats\n    '.|' - quater note, lasts one beat\n\n    >>> parse_music('o o| .| o| o| .| .| .| .| o o')\n    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('') == []\n    assert candidate('o o o o') == [4, 4, 4, 4]\n    assert candidate('.| .| .| .|') == [1, 1, 1, 1]\n    assert candidate('o| o| .| .| o o o o') == [2, 2, 1, 1, 4, 4, 4, 4]\n    assert candidate('o| .| o| .| o o| o o|') == [2, 1, 2, 1, 4, 2, 4, 2]\n\ndef test_check():\n    check(parse_music)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef parse_music(music_string: str) -> List[int]:\n    \"\"\" Input to this function is a string representing musical notes in a special ASCII format.\n    Your task is to parse this string and return list of integers corresponding to how many beats does each\n    not last.\n\n    Here is a legend:\n    'o' - whole note, lasts four beats\n    'o|' - half note, lasts two beats\n    '.|' - quater note, lasts one beat\n\n    >>> parse_music('o o| .| o| o| .| .| .| .| o o')\n    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\n    \"\"\"\n    beats_map = {'o': 4, 'o|': 2, '.|': 1}\n    music_notes = music_string.split()\n    return [beats_map[note] for note in music_notes if note in beats_map]\n```\nthe answer is None",
+        "Attempt_Code": "from typing import List\n\ndef parse_music(music_string: str) -> List[int]:\n    \"\"\" Input to this function is a string representing musical notes in a special ASCII format.\n    Your task is to parse this string and return list of integers corresponding to how many beats does each\n    not last.\n\n    Here is a legend:\n    'o' - whole note, lasts four beats\n    'o|' - half note, lasts two beats\n    '.|' - quater note, lasts one beat\n\n    >>> parse_music('o o| .| o| o| .| .| .| .| o o')\n    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\n    \"\"\"\n    beats_map = {'o': 4, 'o|': 2, '.|': 1}\n    music_notes = music_string.split()\n    return [beats_map[note] for note in music_notes if note in beats_map]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 8.0,
+        "Total_executed": 10,
+        "Pass_Rate": 0.8
+    },
+    {
+        "Question": "from typing import List\n\ndef all_prefixes(string: str) -> List[str]:\n    \"\"\" Return list of all prefixes from shortest to longest of the input string\n    >>> all_prefixes('abc')\n    ['a', 'ab', 'abc']\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('') == []\n    assert candidate('asdfgh') == ['a', 'as', 'asd', 'asdf', 'asdfg', 'asdfgh']\n    assert candidate('WWW') == ['W', 'WW', 'WWW']\n\ndef test_check():\n    check(all_prefixes)\n\ntest_check()\n",
+        "Response": "```python\ndef all_prefixes(string: str) -> List[str]:\n    \"\"\" Return list of all prefixes from shortest to longest of the input string\n    >>> all_prefixes('abc')\n    ['a', 'ab', 'abc']\n    \"\"\"\n    return [string[:i] for i in range(1, len(string) + 1)]\n```\nthe answer is Error occurred: name 'List' is not defined",
+        "Attempt_Code": "def all_prefixes(string: str) -> List[str]:\n    \"\"\" Return list of all prefixes from shortest to longest of the input string\n    >>> all_prefixes('abc')\n    ['a', 'ab', 'abc']\n    \"\"\"\n    return [string[:i] for i in range(1, len(string) + 1)]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 10.0,
+        "Total_executed": 12,
+        "Pass_Rate": 0.8333333333333334
+    },
+    {
+        "Question": "from typing import List\n\ndef eat(number: int, need: int, remaining: int) -> List[int]:\n    \"\"\"\n    You're a hungry rabbit, and you already have eaten a certain number of carrots,\n    but now you need to eat more carrots to complete the day's meals.\n    you should return an array of [ total number of eaten carrots after your meals,\n                                    the number of carrots left after your meals ]\n    if there are not enough remaining carrots, you will eat all remaining carrots, but will still be hungry.\n    \n    Example:\n    >>> eat(5, 6, 10)\n    [11, 4]\n    >>> eat(4, 8, 9)\n    [12, 1]\n    >>> eat(1, 10, 10)\n    [11, 0]\n    >>> eat(2, 11, 5)\n    [7, 0]\n    \n    Variables:\n    @number : integer\n        the number of carrots that you have eaten.\n    @need : integer\n        the number of carrots that you need to eat.\n    @remaining : integer\n        the number of remaining carrots thet exist in stock\n    \n    Constrain:\n    * 0 <= number <= 1000\n    * 0 <= need <= 1000\n    * 0 <= remaining <= 1000\n\n    Have fun :)\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(5, 6, 10) == [11, 4]\n    assert candidate(4, 8, 9) == [12, 1]\n    assert candidate(1, 10, 10) == [11, 0]\n    assert candidate(2, 11, 5) == [7, 0]\n    assert candidate(4, 5, 7) == [9, 2]\n    assert candidate(4, 5, 1) == [5, 0]\n\ndef test_check():\n    check(eat)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef eat(number: int, need: int, remaining: int) -> List[int]:\n    total_eaten = number + min(need, remaining)\n    remaining_after_meals = max(0, remaining - need)\n    return [total_eaten, remaining_after_meals]\n```\nthe answer is None",
+        "Attempt_Code": "from typing import List\n\ndef eat(number: int, need: int, remaining: int) -> List[int]:\n    total_eaten = number + min(need, remaining)\n    remaining_after_meals = max(0, remaining - need)\n    return [total_eaten, remaining_after_meals]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 12.0,
+        "Total_executed": 14,
+        "Pass_Rate": 0.8571428571428571
+    },
+    {
+        "Question": "from typing import List\n\ndef do_algebra(operator: List[str], operand: List[int]) -> int:\n    \"\"\"\n    Given two lists operator, and operand. The first list has basic algebra operations, and \n    the second list is a list of integers. Use the two given lists to build the algebric \n    expression and return the evaluation of this expression.\n\n    The basic algebra operations:\n    Addition ( + ) \n    Subtraction ( - ) \n    Multiplication ( * ) \n    Floor division ( // ) \n    Exponentiation ( ** ) \n\n    Example:\n    operator['+', '*', '-']\n    array = [2, 3, 4, 5]\n    result = 2 + 3 * 4 - 5\n    => result = 9\n\n    Note:\n        The length of operator list is equal to the length of operand list minus one.\n        Operand is a list of of non-negative integers.\n        Operator list has at least one operator, and operand list has at least two operands.\n\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(['**', '*', '+'], [2, 3, 4, 5]) == 37\n    assert candidate(['+', '*', '-'], [2, 3, 4, 5]) == 9\n    assert candidate(['//', '*'], [7, 3, 4]) == 8\n\ndef test_check():\n    check(do_algebra)\n\ntest_check()\n",
+        "Response": "Implement a single function using a stack-based approach for clarity and efficiency. Iterate through the `operand` and `operator`, applying operations sequentially while respecting operator precedence. This keeps the structure simple and adheres to best practices for maintainability. No classes are necessary.\nthe answer is Error occurred: invalid syntax (<string>, line 1)",
+        "Attempt_Code": "Implement a single function using a stack-based approach for clarity and efficiency. Iterate through the `operand` and `operator`, applying operations sequentially while respecting operator precedence. This keeps the structure simple and adheres to best practices for maintainability. No classes are necessary.\nthe answer is Error occurred: invalid syntax (<string>, line 1)",
+        "Solved": 0.0,
+        "Result_Str": "Execution failed: SyntaxError: invalid syntax (<string>, line 29)",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 12.0,
+        "Total_executed": 16,
+        "Pass_Rate": 0.75
+    },
+    {
+        "Question": "from typing import List\n\ndef by_length(arr: List[int]) -> List[str]:\n    \"\"\"\n    Given an array of integers, sort the integers that are between 1 and 9 inclusive,\n    reverse the resulting array, and then replace each digit by its corresponding name from\n    \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\".\n\n    For example:\n    >>> by_length([2, 1, 1, 4, 5, 8, 2, 3])\n    ['Eight', 'Five', 'Four', 'Three', 'Two', 'Two', 'One', 'One']\n    \n      If the array is empty, return an empty array:\n    >>> by_length([])\n    []\n    \n      If the array has any strange number ignore it:\n    >>> by_length([1, -1, 55])\n    ['One']\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([2, 1, 1, 4, 5, 8, 2, 3]) == ['Eight', 'Five', 'Four', 'Three', 'Two', 'Two', 'One', 'One']\n    assert candidate([]) == []\n    assert candidate([1, -1, 55]) == ['One']\n    assert candidate([1, -1, 3, 2]) == ['Three', 'Two', 'One']\n    assert candidate([9, 4, 8]) == ['Nine', 'Eight', 'Four']\n\ndef test_check():\n    check(by_length)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef by_length(arr: List[int]) -> List[str]:\n    \"\"\"\n    Given an array of integers, sort the integers that are between 1 and 9 inclusive,\n    reverse the resulting array, and then replace each digit by its corresponding name from\n    \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\".\n\n    For example:\n    >>> by_length([2, 1, 1, 4, 5, 8, 2, 3])\n    ['Eight', 'Five', 'Four', 'Three', 'Two', 'Two', 'One', 'One']\n    \n      If the array is empty, return an empty array:\n    >>> by_length([])\n    []\n    \n      If the array has any strange number ignore it:\n    >>> by_length([1, -1, 55])\n    ['One']\n    \"\"\"\n    number_names = {\n        1: \"One\",\n        2: \"Two\",\n        3: \"Three\",\n        4: \"Four\",\n        5: \"Five\",\n        6: \"Six\",\n        7: \"Seven\",\n        8: \"Eight\",\n        9: \"Nine\"\n    }\n    \n    filtered_sorted = sorted([num for num in arr if 1 <= num <= 9], reverse=True)\n    return [number_names[num] for num in filtered_sorted]\n```\nthe answer is None",
+        "Attempt_Code": "from typing import List\n\ndef by_length(arr: List[int]) -> List[str]:\n    \"\"\"\n    Given an array of integers, sort the integers that are between 1 and 9 inclusive,\n    reverse the resulting array, and then replace each digit by its corresponding name from\n    \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\".\n\n    For example:\n    >>> by_length([2, 1, 1, 4, 5, 8, 2, 3])\n    ['Eight', 'Five', 'Four', 'Three', 'Two', 'Two', 'One', 'One']\n    \n      If the array is empty, return an empty array:\n    >>> by_length([])\n    []\n    \n      If the array has any strange number ignore it:\n    >>> by_length([1, -1, 55])\n    ['One']\n    \"\"\"\n    number_names = {\n        1: \"One\",\n        2: \"Two\",\n        3: \"Three\",\n        4: \"Four\",\n        5: \"Five\",\n        6: \"Six\",\n        7: \"Seven\",\n        8: \"Eight\",\n        9: \"Nine\"\n    }\n    \n    filtered_sorted = sorted([num for num in arr if 1 <= num <= 9], reverse=True)\n    return [number_names[num] for num in filtered_sorted]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                1
+            ]
+        ],
+        "Total_solved": 14.0,
+        "Total_executed": 18,
+        "Pass_Rate": 0.7777777777777778
+    },
+    {
+        "Question": "from typing import List\n\ndef count_up_to(n: int) -> List[int]:\n    \"\"\"Implement a function that takes an non-negative integer and returns an array of the first n\n    integers that are prime numbers and less than n.\n    for example:\n    >>> count_up_to(5)\n    [2, 3]\n    >>> count_up_to(11)\n    [2, 3, 5, 7]\n    >>> count_up_to(0)\n    []\n    >>> count_up_to(20)\n    [2, 3, 5, 7, 11, 13, 17, 19]\n    >>> count_up_to(1)\n    []\n    >>> count_up_to(18)\n    [2, 3, 5, 7, 11, 13, 17]\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(5) == [2, 3]\n    assert candidate(6) == [2, 3, 5]\n    assert candidate(7) == [2, 3, 5]\n    assert candidate(10) == [2, 3, 5, 7]\n    assert candidate(0) == []\n    assert candidate(22) == [2, 3, 5, 7, 11, 13, 17, 19]\n    assert candidate(1) == []\n    assert candidate(18) == [2, 3, 5, 7, 11, 13, 17]\n    assert candidate(47) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]\n    assert candidate(101) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]\n\ndef test_check():\n    check(count_up_to)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef count_up_to(n: int) -> List[int]:\n    \"\"\"Implement a function that takes a non-negative integer and returns an array of the first n\n    integers that are prime numbers and less than n.\n    for example:\n    >>> count_up_to(5)\n    [2, 3]\n    >>> count_up_to(11)\n    [2, 3, 5, 7]\n    >>> count_up_to(0)\n    []\n    >>> count_up_to(20)\n    [2, 3, 5, 7, 11, 13, 17, 19]\n    >>> count_up_to(1)\n    []\n    >>> count_up_to(18)\n    [2, 3, 5, 7, 11, 13, 17]\n    \"\"\"\n    def is_prime(num: int) -> bool:\n        if num < 2:\n            return False\n        for i in range(2, int(num**0.5) + 1):\n            if num % i == 0:\n                return False\n        return True\n\n    primes = []\n    for i in range(2, n):\n        if is_prime(i):\n            primes.append(i)\n    \n    return primes\n```\nthe answer is None",
+        "Attempt_Code": "from typing import List\n\ndef count_up_to(n: int) -> List[int]:\n    \"\"\"Implement a function that takes a non-negative integer and returns an array of the first n\n    integers that are prime numbers and less than n.\n    for example:\n    >>> count_up_to(5)\n    [2, 3]\n    >>> count_up_to(11)\n    [2, 3, 5, 7]\n    >>> count_up_to(0)\n    []\n    >>> count_up_to(20)\n    [2, 3, 5, 7, 11, 13, 17, 19]\n    >>> count_up_to(1)\n    []\n    >>> count_up_to(18)\n    [2, 3, 5, 7, 11, 13, 17]\n    \"\"\"\n    def is_prime(num: int) -> bool:\n        if num < 2:\n            return False\n        for i in range(2, int(num**0.5) + 1):\n            if num % i == 0:\n                return False\n        return True\n\n    primes = []\n    for i in range(2, n):\n        if is_prime(i):\n            primes.append(i)\n    \n    return primes",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                1
+            ]
+        ],
+        "Total_solved": 16.0,
+        "Total_executed": 20,
+        "Pass_Rate": 0.8
+    }
+]

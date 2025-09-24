@@ -1,0 +1,412 @@
+import sys
+import os
+import argparse
+import yaml
+import json
+import time
+import asyncio
+from pathlib import Path
+import torch
+import copy
+from typing import List,Union,Literal
+import random
+# The following line is no longer necessary after installing with setup.py
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+sys.stdout.reconfigure(encoding='utf-8')
+
+from GDesigner.utils.const import GDesigner_ROOT
+from GDesigner.graph.graph import Graph
+from GDesigner.tools.reader.readers import JSONLReader
+import GDesigner.agents  # Import to register all agent classes
+from GDesigner.utils.globals import Time
+from GDesigner.utils.globals import Cost, PromptTokens, CompletionTokens
+from datasets.humaneval_dataset import humaneval_data_process, humaneval_get_predict, check_correctness
+
+from GDesigner.gdt.gtd_framework import GTDFramework
+from GDesigner.gdt.proxy_reward_model import ProxyRewardModel
+from GDesigner.llm.profile_embedding import get_sentence_embedding
+from GDesigner.prompt.prompt_set_registry import PromptSetRegistry
+from torch.utils.data import DataLoader, TensorDataset
+from torch_geometric.data import Data
+from torch_geometric.loader import DataLoader as PyGDataLoader
+from torch_geometric.utils import dense_to_sparse
+
+from GDesigner.gdt.gtd_framework import GTDFramework
+from GDesigner.gdt.proxy_reward_model import ProxyRewardModel
+from GDesigner.llm.profile_embedding import get_sentence_embedding
+from GDesigner.prompt.prompt_set_registry import PromptSetRegistry
+from torch.utils.data import DataLoader, TensorDataset
+from torch_geometric.data import Data
+from torch_geometric.loader import DataLoader as PyGDataLoader
+from torch_geometric.utils import dense_to_sparse
+
+def load_result(result_file):
+    if not result_file.exists():
+        with open(result_file, 'w',encoding='utf-8') as file:
+            json.dump([], file)
+
+    with open(result_file, 'r',encoding='utf-8') as file:
+        data = json.load(file)
+    return data
+
+def dataloader(data_list, batch_size, i_batch):
+    return data_list[i_batch*batch_size:i_batch*batch_size + batch_size]
+    
+def parse_args():
+    parser = argparse.ArgumentParser(description="GDesigner Experiments on humaneval")
+    parser.add_argument("--dataset_json", type=str, default="datasets/humaneval/humaneval-py.jsonl")
+    parser.add_argument("--llm_name", type=str, default="gpt-4o")
+    parser.add_argument('--mode', type=str, default='FullConnected',
+                        choices=['DirectAnswer', 'FullConnected', 'Random', 'Chain','Debate','Layered','Star', 'GTD'],
+                        help="Mode of operation. Default is 'FullConnected'.")
+    parser.add_argument('--lr', type=float, default=0.1,help="learning rate")
+    parser.add_argument('--batch_size', type=int, default=2,help="batch size")
+    parser.add_argument('--num_rounds',type=int,default=1,help="Number of optimization/inference rounds for one query")
+    parser.add_argument('--num_iterations', type=int, default=10,help="The num of training iterations.")
+    parser.add_argument('--domain', type=str, default="humaneval",help="Domain (the same as dataset name), default 'humaneval'")
+    parser.add_argument('--agent_names', nargs='+', type=str, default=['SeniorSoftwareEngineer', 'TDDExpert', 'CodeReviewer'],
+                        help='Specify agent names as a list of strings')
+    parser.add_argument('--agent_nums', nargs='+', type=int, default=[1, 1, 1],
+                        help='Specify the number of agents for each name in agent_names')
+    parser.add_argument('--decision_method', type=str, default='FinalAnswer',
+                        help='The decison method of the GDesigner')
+    
+    # GTD Specific Arguments
+    gtd_group = parser.add_argument_group('GTD Mode Options')
+    gtd_group.add_argument('--gtd_node_feat_dim', type=int, default=384)
+    gtd_group.add_argument('--gtd_cond_dim', type=int, default=128)
+    gtd_group.add_argument('--gtd_task_cond_input_dim', type=int, default=384)
+    gtd_group.add_argument('--gtd_time_emb_dim', type=int, default=128)
+    gtd_group.add_argument('--gtd_layers', type=int, default=2)
+    gtd_group.add_argument('--gtd_heads', type=int, default=2)
+    gtd_group.add_argument('--gtd_diffusion_steps', type=int, default=50)
+    gtd_group.add_argument('--gtd_candidates', type=int, default=5)
+    gtd_group.add_argument('--gtd-generate-data', action='store_true')
+    gtd_group.add_argument('--gtd-train-models', action='store_true')
+    gtd_group.add_argument('--gtd-datagen-limit', type=int, default=50)
+    gtd_group.add_argument('--gtd-dataset-path', type=str, default='gtd_humaneval_dataset.jsonl')
+    gtd_group.add_argument('--gtd-proxy-model-path', type=str, default='proxy_model_humaneval.pth')
+    gtd_group.add_argument('--gtd-diffusion-model-path', type=str, default='diffusion_model_humaneval.pth')
+    gtd_group.add_argument('--gtd-epochs', type=int, default=10)
+    
+    # Add missing GNN/MLP hyperparameter arguments
+    parser.add_argument('--gnn_hidden_dim', type=int, default=32)
+    parser.add_argument('--gnn_layers', type=int, default=2)
+    parser.add_argument('--mlp_hidden_dim', type=int, default=64)
+    
+    # Add missing GTDFramework hyperparameter arguments
+    parser.add_argument('--time_embed_dim', type=int, default=128)
+    parser.add_argument('--gt_num_layers', type=int, default=2)
+    parser.add_argument('--gt_num_heads', type=int, default=2)
+    
+    args = parser.parse_args()
+    return args
+
+async def generate_initial_dataset(args, dataset):
+    """PHASE 1: Generate initial dataset by running baseline topologies."""
+    print("--- Starting Phase 1: Initial Dataset Generation for Humaneval---")
+    agent_names_list = [name for name, num in zip(args.agent_names, args.agent_nums) for _ in range(num)]
+    num_nodes = len(agent_names_list)
+    prompt_set = PromptSetRegistry.get(args.domain)
+    agent_profiles = [prompt_set.get_description(name) for name in agent_names_list]
+    node_features_base = [get_sentence_embedding(p) for p in agent_profiles]
+
+    def generate_static_topologies(n):
+        topologies = {
+            'fully_connected': [[1 if i != j else 0 for j in range(n)] for i in range(n)],
+            'chain': [[1 if j == i + 1 else 0 for j in range(n)] for i in range(n)],
+            'star': [[1 if i == 0 and j > 0 else 0 for j in range(n)] for i in range(n)],
+        }
+        for i in range(3):
+            topologies[f'random_{i}'] = [[random.randint(0, 1) if i != j else 0 for j in range(n)] for i in range(n)]
+        return topologies
+
+    static_topologies = generate_static_topologies(num_nodes)
+    generated_data = []
+
+    for i, record in enumerate(dataset):
+        if i >= args.gtd_datagen_limit:
+            print(f"Reached data generation limit ({args.gtd_datagen_limit} records).")
+            break
+        
+        task_prompt = record["task"]
+        test_code = record["test"]
+        task_condition_embedding = get_sentence_embedding(task_prompt)
+        
+        task_preview = task_prompt.replace('\n', ' ')[:80]
+        print(f"\nProcessing record {i}: {task_preview}...")
+
+        for name, topology_matrix in static_topologies.items():
+            print(f"  Testing topology: {name}")
+            gdesigner_graph = Graph(args.domain, args.llm_name, agent_names_list, "FinalDirect", fixed_spatial_masks=topology_matrix)
+            raw_answer, _ = await gdesigner_graph.arun({"task": task_prompt}, args.num_rounds)
+            
+            predicted_code = humaneval_get_predict(raw_answer[0])
+            print("="*80)
+            print("GTD PROBLEM DEBUG:")
+            print("="*80)
+            print("RAW MODEL RESPONSE:")
+            print(repr(raw_answer[0]))
+            print("\nEXTRACTED CODE:")
+            print(repr(predicted_code))
+            print("\nTASK PROMPT:")
+            print(repr(task_prompt[:200]))
+            print("\nTEST CODE:")
+            print(repr(test_code[:200]))
+            print("="*80)
+            score, _ = check_correctness(task_prompt, predicted_code, test_code)
+            utility = score
+            cost = sum(sum(row) for row in topology_matrix)
+            
+            data_point = {
+                'graph': topology_matrix,
+                'condition': task_condition_embedding.tolist(),
+                'node_features': [feat.tolist() for feat in node_features_base],
+                'performance': {'utility': utility, 'cost': cost}
+            }
+            generated_data.append(data_point)
+
+    with open(args.gtd_dataset_path, 'w') as f:
+        for item in generated_data:
+            f.write(json.dumps(item) + '\n')
+    print(f"\n--- Phase 1 Finished: Saved {len(generated_data)} data points to {args.gtd_dataset_path} ---")
+
+async def train_gtd_models(args):
+    """PHASE 2: Train the Proxy and Diffusion models from the generated dataset."""
+    # (This function is identical to run_gsm8k.py and can be refactored)
+    # ... implementation is the same ...
+    print(f"--- Starting Phase 2: Training GTD Models from {args.gtd_dataset_path} ---")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    # 1. Load the dataset
+    proxy_data_list = []
+    diffusion_A0_list, diffusion_nodes_list, diffusion_cond_list = [], [], []
+    with open(args.gtd_dataset_path, 'r') as f:
+        for line in f:
+            item = json.loads(line)
+            # For Proxy Model
+            adj_matrix = torch.tensor(item['graph'], dtype=torch.float)
+            edge_index, _ = dense_to_sparse(adj_matrix)
+            rewards = item['performance']
+            proxy_data_item = Data(
+                x=torch.tensor(item['node_features'], dtype=torch.float),
+                edge_index=edge_index,
+                condition=torch.tensor(item['condition'], dtype=torch.float).unsqueeze(0),
+                true_rewards=torch.tensor([rewards['utility'], rewards['cost']], dtype=torch.float).unsqueeze(0)
+            )
+            proxy_data_list.append(proxy_data_item)
+            
+            # For Diffusion Model (only use high-quality graphs)
+            if rewards['utility'] >= 0.0:
+                diffusion_A0_list.append(item['graph'])
+                diffusion_nodes_list.append(item['node_features'])
+                diffusion_cond_list.append(item['condition'])
+
+    print(f"Loaded {len(proxy_data_list)} samples for Proxy Model training.")
+    print(f"Loaded {len(diffusion_A0_list)} high-quality samples for Diffusion Model training.")
+
+    # Always train models even if no high-quality data (will use all available data)
+    if not diffusion_A0_list:
+        print("Warning: No high-quality graphs found, but proceeding with available data for training.")
+
+    # 2. Train Proxy Model
+    proxy_model = ProxyRewardModel(
+        task_cond_input_dim=args.gtd_task_cond_input_dim,
+        node_feature_dim=args.gtd_node_feat_dim,
+        condition_dim=args.gtd_cond_dim,
+        gnn_hidden_dim=args.gnn_hidden_dim,
+        gnn_layers=args.gnn_layers,
+        mlp_hidden_dim=args.mlp_hidden_dim,
+        num_reward_components=2
+    ).to(device)
+    pyg_dataloader = PyGDataLoader(proxy_data_list, batch_size=16, shuffle=True)
+    optimizer = torch.optim.Adam(proxy_model.parameters(), lr=1e-3)
+    criterion = torch.nn.MSELoss()
+
+    print("\n--- Training Proxy Reward Model ---")
+    proxy_model.train()
+    for epoch in range(args.gtd_epochs):
+        total_loss = 0
+        for batch in pyg_dataloader:
+            batch = batch.to(device)
+            optimizer.zero_grad()
+            pred_rewards = proxy_model(batch)
+            loss = criterion(pred_rewards, batch.true_rewards)
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+        print(f"Epoch {epoch+1}/{args.gtd_epochs}, Proxy Model Loss: {total_loss / len(pyg_dataloader):.4f}")
+    
+    torch.save(proxy_model.state_dict(), args.gtd_proxy_model_path)
+    print(f"--- Saved trained Proxy Model to {args.gtd_proxy_model_path} ---")
+
+    # 3. Train Diffusion Model
+    diffusion_model = GTDFramework(
+        task_cond_input_dim=args.gtd_task_cond_input_dim,
+        node_feature_dim=args.gtd_node_feat_dim,
+        condition_dim=args.gtd_cond_dim,
+        time_embed_dim=args.time_embed_dim,
+        gt_num_layers=args.gt_num_layers,
+        gt_num_heads=args.gt_num_heads,
+        diffusion_num_timesteps=args.gtd_diffusion_steps,
+        device=device
+    )
+    
+    # Ensure we have data for training, even if all are low quality
+    if not diffusion_A0_list:
+        # Use all available data if no high-quality data exists
+        with open(args.gtd_dataset_path, 'r') as f:
+            for line in f:
+                item = json.loads(line)
+                diffusion_A0_list.append(item['graph'])
+                diffusion_nodes_list.append(item['node_features'])
+                diffusion_cond_list.append(item['condition'])
+    
+    if diffusion_A0_list:  # Only train if we have any data at all
+        diffusion_dataset = TensorDataset(
+            torch.tensor(diffusion_A0_list, dtype=torch.float),
+            torch.tensor(diffusion_nodes_list, dtype=torch.float),
+            torch.tensor(diffusion_cond_list, dtype=torch.float)
+        )
+        diffusion_dataloader = DataLoader(diffusion_dataset, batch_size=16, shuffle=True)
+        
+        print("\n--- Training Diffusion Model ---")
+        diffusion_model.train_diffusion_model(dataloader=diffusion_dataloader, epochs=args.gtd_epochs, learning_rate=1e-4)
+    
+    torch.save(diffusion_model.diffusion_model.state_dict(), args.gtd_diffusion_model_path)
+    print(f"--- Saved trained Diffusion Model to {args.gtd_diffusion_model_path} ---")
+
+
+async def run_gtd_experiment(args, dataset):
+    """PHASE 3: Main logic for running experiments with a pre-trained GTD Framework."""
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"--- Starting Phase 3: GTD Inference for Humaneval on device: {device} ---")
+
+    agent_names_list = [name for name, num in zip(args.agent_names, args.agent_nums) for _ in range(num)]
+    num_nodes = len(agent_names_list)
+
+    proxy_model = ProxyRewardModel(
+        task_cond_input_dim=args.gtd_task_cond_input_dim,
+        node_feature_dim=args.gtd_node_feat_dim,
+        condition_dim=args.gtd_cond_dim,
+        gnn_hidden_dim=args.gnn_hidden_dim,
+        gnn_layers=args.gnn_layers,
+        mlp_hidden_dim=args.mlp_hidden_dim,
+        num_reward_components=2
+    )
+    proxy_model.load_state_dict(torch.load(args.gtd_proxy_model_path))
+    proxy_model.to(device)
+    proxy_model.eval()
+    
+    proxy_model.reward_component_names = ['utility', 'cost']
+    macp_weights = {'utility': 1.0, 'cost': -0.1}
+
+    gtd_framework = GTDFramework(
+        task_cond_input_dim=args.gtd_task_cond_input_dim,
+        node_feature_dim=args.gtd_node_feat_dim,
+        condition_dim=args.gtd_cond_dim,
+        time_embed_dim=args.time_embed_dim,
+        gt_num_layers=args.gt_num_layers,
+        gt_num_heads=args.gt_num_heads,
+        diffusion_num_timesteps=args.gtd_diffusion_steps,
+        proxy_reward_model=proxy_model,
+        macp_weights=macp_weights,
+        num_candidates_per_step=args.gtd_candidates,
+        device=device
+    )
+    gtd_framework.diffusion_model.load_state_dict(torch.load(args.gtd_diffusion_model_path))
+    gtd_framework.diffusion_model.to(device)
+    gtd_framework.diffusion_model.eval()
+
+    print("--- Loaded Pre-trained Proxy and Diffusion models ---")
+
+    prompt_set = PromptSetRegistry.get(args.domain)
+    agent_profiles = [prompt_set.get_description(name) for name in agent_names_list]
+    node_features_base = torch.tensor([get_sentence_embedding(p) for p in agent_profiles]).float().to(device)
+
+    current_time = Time.instance().value or time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
+    Time.instance().value = current_time
+    result_dir = Path(f"{GDesigner_ROOT}/result/gtd_{args.domain}")
+    result_dir.mkdir(parents=True, exist_ok=True)
+    result_file = result_dir / f"{args.llm_name}_{current_time}.json"
+    
+    num_batches = int(len(dataset) / args.batch_size)
+    total_solved, total_executed = (0, 0)
+
+    for i_batch in range(num_batches):
+        print(f"GTD Batch {i_batch}", 80*'-')
+        current_batch = dataloader(dataset, args.batch_size, i_batch)
+        if not current_batch:
+            break
+        
+        for record in current_batch:
+            task_prompt = record["task"]
+            test_code = record["test"]
+
+            task_condition_embedding = torch.tensor(get_sentence_embedding(task_prompt)).float().unsqueeze(0).to(device)
+
+            generated_A0_probs = gtd_framework.generate_graphs(
+                num_graphs=1, num_nodes=num_nodes,
+                node_features=node_features_base.unsqueeze(0),
+                task_condition=task_condition_embedding, use_guidance=True
+            )
+            generated_adj_matrix = (generated_A0_probs.squeeze(0) > 0.5).int()
+
+            gdesigner_graph = Graph(args.domain, args.llm_name, agent_names_list, "FinalDirect", fixed_spatial_masks=generated_adj_matrix.tolist())
+
+            input_dict = {"task": task_prompt}
+            raw_answer, _ = await gdesigner_graph.arun(input_dict, args.num_rounds)
+            
+            predicted_code = humaneval_get_predict(raw_answer[0])
+            print("="*80)
+            print("GTD PROBLEM DEBUG:")
+            print("="*80)
+            print("RAW MODEL RESPONSE:")
+            print(repr(raw_answer[0]))
+            print("\nEXTRACTED CODE:")
+            print(repr(predicted_code))
+            print("\nTASK PROMPT:")
+            print(repr(task_prompt[:200]))
+            print("\nTEST CODE:")
+            print(repr(test_code[:200]))
+            print("="*80)
+            score, result_str = check_correctness(task_prompt, predicted_code, test_code)
+            
+            total_solved += score
+            total_executed += 1
+            pass_rate = total_solved / total_executed if total_executed > 0 else 0
+            
+            task_preview = task_prompt.replace('\n', ' ')[:50]
+            print(f"Query: {task_preview}... | Score: {score:.3f} | Pass@1: {pass_rate:.3f}")
+
+        data = load_result(result_file)
+        updated_item = {
+            "Question": task_prompt, "Test": test_code, "Response": raw_answer[0],
+            "Attempt_Code": predicted_code, "Solved": score, "Result_Str": result_str,
+            "Generated_Topology": generated_adj_matrix.tolist(),
+            "Total_solved": total_solved, "Total_executed": total_executed, "Pass_Rate": pass_rate
+        }
+        data.append(updated_item)
+        with open(result_file, 'w', encoding='utf-8') as file:
+            json.dump(data, file, indent=4)
+            
+        print(f"Cost {Cost.instance().value}")
+
+async def main():
+    args = parse_args()
+    
+    dataset = JSONLReader.parse_file(args.dataset_json)
+    dataset = humaneval_data_process(dataset)
+    
+    if args.gtd_generate_data:
+        await generate_initial_dataset(args, dataset)
+    elif args.gtd_train_models:
+        await train_gtd_models(args)
+    elif args.mode == 'GTD':
+        await run_gtd_experiment(args, dataset)
+    else:
+        # Fallback for non-GTD modes is not implemented for this script
+        print(f"Mode '{args.mode}' is not supported for GTD-focused humaneval script.")
+
+if __name__ == '__main__':
+    asyncio.run(main())

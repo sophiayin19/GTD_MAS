@@ -1,0 +1,82 @@
+[
+    {
+        "Question": "def encrypt(s: str) -> str:\n    \"\"\"Create a function encrypt that takes a string as an argument and\n    returns a string encrypted with the alphabet being rotated. \n    The alphabet should be rotated in a manner such that the letters \n    shift down by two multiplied to two places.\n    For example:\n    >>> encrypt('hi')\n    'lm'\n    >>> encrypt('asdfghjkl')\n    'ewhjklnop'\n    >>> encrypt('gf')\n    'kj'\n    >>> encrypt('et')\n    'ix'\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('hi') == 'lm'\n    assert candidate('asdfghjkl') == 'ewhjklnop'\n    assert candidate('gf') == 'kj'\n    assert candidate('et') == 'ix'\n    assert candidate('faewfawefaewg') == 'jeiajeaijeiak'\n    assert candidate('hellomyfriend') == 'lippsqcjvmirh'\n    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh') == 'hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl'\n    assert candidate('a') == 'e'\n\ndef test_check():\n    check(encrypt)\n\ntest_check()\n",
+        "Response": "```python\ndef encrypt(s: str) -> str:\n    \"\"\"Create a function encrypt that takes a string as an argument and\n    returns a string encrypted with the alphabet being rotated. \n    The alphabet should be rotated in a manner such that the letters \n    shift down by two multiplied to two places.\n    For example:\n    >>> encrypt('hi')\n    'lm'\n    >>> encrypt('asdfghjkl')\n    'ewhjklnop'\n    >>> encrypt('gf')\n    'kj'\n    >>> encrypt('et')\n    'ix'\n    \"\"\"\n    result = []\n    for char in s:\n        if char.isalpha():\n            shift = (ord(char) - ord('a') + 4) % 26\n            new_char = chr(ord('a') + shift)\n            result.append(new_char)\n        else:\n            result.append(char)\n    return ''.join(result)\n```",
+        "Attempt_Code": "def encrypt(s: str) -> str:\n    \"\"\"Create a function encrypt that takes a string as an argument and\n    returns a string encrypted with the alphabet being rotated. \n    The alphabet should be rotated in a manner such that the letters \n    shift down by two multiplied to two places.\n    For example:\n    >>> encrypt('hi')\n    'lm'\n    >>> encrypt('asdfghjkl')\n    'ewhjklnop'\n    >>> encrypt('gf')\n    'kj'\n    >>> encrypt('et')\n    'ix'\n    \"\"\"\n    result = []\n    for char in s:\n        if char.isalpha():\n            shift = (ord(char) - ord('a') + 4) % 26\n            new_char = chr(ord('a') + shift)\n            result.append(new_char)\n        else:\n            result.append(char)\n    return ''.join(result)",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                1
+            ]
+        ],
+        "Total_solved": 2.0,
+        "Total_executed": 2,
+        "Pass_Rate": 1.0
+    },
+    {
+        "Question": "from typing import List\n\ndef add(lst: List[int]) -> int:\n    \"\"\"Given a non-empty list of integers lst. add the even elements that are at odd indices..\n\n\n    Examples:\n    >>> add([4, 2, 6, 7])\n    2\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([4, 88]) == 88\n    assert candidate([4, 5, 6, 7, 2, 122]) == 122\n    assert candidate([4, 0, 6, 7]) == 0\n    assert candidate([4, 4, 6, 8]) == 12\n\ndef test_check():\n    check(add)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef add(lst: List[int]) -> int:\n    \"\"\"Given a non-empty list of integers lst. Add the even elements that are at odd indices.\n\n    Examples:\n    >>> add([4, 2, 6, 7])\n    2\n    \"\"\"\n    return sum(x for i, x in enumerate(lst) if i % 2 == 1 and x % 2 == 0)\n```",
+        "Attempt_Code": "from typing import List\n\ndef add(lst: List[int]) -> int:\n    \"\"\"Given a non-empty list of integers lst. Add the even elements that are at odd indices.\n\n    Examples:\n    >>> add([4, 2, 6, 7])\n    2\n    \"\"\"\n    return sum(x for i, x in enumerate(lst) if i % 2 == 1 and x % 2 == 0)",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 4.0,
+        "Total_executed": 4,
+        "Pass_Rate": 1.0
+    },
+    {
+        "Question": "def fibfib(n: int) -> int:\n    \"\"\"The FibFib number sequence is a sequence similar to the Fibbonacci sequnece that's defined as follows:\n    fibfib(0) == 0\n    fibfib(1) == 0\n    fibfib(2) == 1\n    fibfib(n) == fibfib(n-1) + fibfib(n-2) + fibfib(n-3).\n    Please write a function to efficiently compute the n-th element of the fibfib number sequence.\n    >>> fibfib(1)\n    0\n    >>> fibfib(5)\n    4\n    >>> fibfib(8)\n    24\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate(2) == 1\n    assert candidate(1) == 0\n    assert candidate(5) == 4\n    assert candidate(8) == 24\n    assert candidate(10) == 81\n    assert candidate(12) == 274\n    assert candidate(14) == 927\n\ndef test_check():\n    check(fibfib)\n\ntest_check()\n",
+        "Response": "Use a single function with memoization to compute the `fibfib` sequence efficiently. This prevents redundant calculations and enhances performance.\n\n```python\ndef fibfib(n: int, memo={0: 0, 1: 0, 2: 1}) -> int:\n    if n in memo:\n        return memo[n]\n    memo[n] = fibfib(n - 1, memo) + fibfib(n - 2, memo) + fibfib(n - 3, memo)\n    return memo[n]\n```",
+        "Attempt_Code": "def fibfib(n: int, memo={0: 0, 1: 0, 2: 1}) -> int:\n    if n in memo:\n        return memo[n]\n    memo[n] = fibfib(n - 1, memo) + fibfib(n - 2, memo) + fibfib(n - 3, memo)\n    return memo[n]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 6.0,
+        "Total_executed": 6,
+        "Pass_Rate": 1.0
+    },
+    {
+        "Question": "from typing import List, Any\n\ndef filter_integers(values: List[Any]) -> List[int]:\n    \"\"\" Filter given list of any python values only for integers\n    >>> filter_integers(['a', 3.14, 5])\n    [5]\n    >>> filter_integers([1, 2, 3, 'abc', {  }, []])\n    [1, 2, 3]\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate([]) == []\n    assert candidate([4, {  }, [], 23.2, 9, 'adasd']) == [4, 9]\n    assert candidate([3, 'c', 3, 3, 'a', 'b']) == [3, 3, 3]\n\ndef test_check():\n    check(filter_integers)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List, Any\n\ndef filter_integers(values: List[Any]) -> List[int]:\n    \"\"\" Filter given list of any python values only for integers\n    >>> filter_integers(['a', 3.14, 5])\n    [5]\n    >>> filter_integers([1, 2, 3, 'abc', {  }, []])\n    [1, 2, 3]\n    \"\"\"\n    return [value for value in values if isinstance(value, int)]\n```",
+        "Attempt_Code": "from typing import List, Any\n\ndef filter_integers(values: List[Any]) -> List[int]:\n    \"\"\" Filter given list of any python values only for integers\n    >>> filter_integers(['a', 3.14, 5])\n    [5]\n    >>> filter_integers([1, 2, 3, 'abc', {  }, []])\n    [1, 2, 3]\n    \"\"\"\n    return [value for value in values if isinstance(value, int)]",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 7.0,
+        "Total_executed": 8,
+        "Pass_Rate": 0.875
+    },
+    {
+        "Question": "from typing import List\n\ndef parse_music(music_string: str) -> List[int]:\n    \"\"\" Input to this function is a string representing musical notes in a special ASCII format.\n    Your task is to parse this string and return list of integers corresponding to how many beats does each\n    not last.\n\n    Here is a legend:\n    'o' - whole note, lasts four beats\n    'o|' - half note, lasts two beats\n    '.|' - quater note, lasts one beat\n\n    >>> parse_music('o o| .| o| o| .| .| .| .| o o')\n    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\n    \"\"\"\n",
+        "Test": "def check(candidate):\n    assert candidate('') == []\n    assert candidate('o o o o') == [4, 4, 4, 4]\n    assert candidate('.| .| .| .|') == [1, 1, 1, 1]\n    assert candidate('o| o| .| .| o o o o') == [2, 2, 1, 1, 4, 4, 4, 4]\n    assert candidate('o| .| o| .| o o| o o|') == [2, 1, 2, 1, 4, 2, 4, 2]\n\ndef test_check():\n    check(parse_music)\n\ntest_check()\n",
+        "Response": "```python\nfrom typing import List\n\ndef parse_music(music_string: str) -> List[int]:\n    \"\"\" Input to this function is a string representing musical notes in a special ASCII format.\n    Your task is to parse this string and return list of integers corresponding to how many beats does each\n    note last.\n\n    Here is a legend:\n    'o' - whole note, lasts four beats\n    'o|' - half note, lasts two beats\n    '.|' - quarter note, lasts one beat\n\n    >>> parse_music('o o| .| o| o| .| .| .| .| o o')\n    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\n    \"\"\"\n    beats = []\n    notes = music_string.split()\n    \n    for note in notes:\n        if note == 'o':\n            beats.append(4)\n        elif note == 'o|':\n            beats.append(2)\n        elif note == '.|':\n            beats.append(1)\n    \n    return beats\n```",
+        "Attempt_Code": "from typing import List\n\ndef parse_music(music_string: str) -> List[int]:\n    \"\"\" Input to this function is a string representing musical notes in a special ASCII format.\n    Your task is to parse this string and return list of integers corresponding to how many beats does each\n    note last.\n\n    Here is a legend:\n    'o' - whole note, lasts four beats\n    'o|' - half note, lasts two beats\n    '.|' - quarter note, lasts one beat\n\n    >>> parse_music('o o| .| o| o| .| .| .| .| o o')\n    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]\n    \"\"\"\n    beats = []\n    notes = music_string.split()\n    \n    for note in notes:\n        if note == 'o':\n            beats.append(4)\n        elif note == 'o|':\n            beats.append(2)\n        elif note == '.|':\n            beats.append(1)\n    \n    return beats",
+        "Solved": 1.0,
+        "Result_Str": "All tests passed",
+        "Generated_Topology": [
+            [
+                0
+            ]
+        ],
+        "Total_solved": 9.0,
+        "Total_executed": 10,
+        "Pass_Rate": 0.9
+    }
+]
